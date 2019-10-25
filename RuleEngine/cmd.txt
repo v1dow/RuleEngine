@@ -1,0 +1,1 @@
+g++ -o test parser.tab.c lex.yy.c calc.cpp calc_parser.cpp symbol.cpp
