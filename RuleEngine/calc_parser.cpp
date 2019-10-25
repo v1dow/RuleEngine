@@ -790,6 +790,10 @@ char*calc_parser::GetStrResult()
 {
 	return m_strresult;
 }
+LISTDOUBLE* calc_parser::GetListResult()
+{
+	return m_lresult;
+}
 void calc_parser::ClearStrResult()
 {
 	delete[] m_strresult;

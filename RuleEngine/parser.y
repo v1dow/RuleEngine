@@ -110,7 +110,7 @@ lines
 	;
 
 line
-	: expr '\n'					{  parser->m_result = (double)$1; printf("Result is:%f",(double)$1); }
+	: expr '\n'					{  parser->m_result = (double)$1; }
 
 	| expr ';'							{  parser->m_result = (double)$1; }
 	| expr ';'	'\n'					{  parser->m_result = (double)$1;}
@@ -364,6 +364,31 @@ void changeParaValue(reason *re,rule *tmpRule)
 }
 //change
 
+void reasonRules(reason *re,calc::calc_parser* parser)
+{
+	TOKENLIST *tl = re->GetTokenList();
+	RULELIST *rlist = re->GetRuleList();
+	TOKENLIST::iterator tit;
+	RULELIST::iterator rit;
+    PARALIST *ptmplist = NULL;
+    PARALIST::iterator ptmpit;
+	string value;
+
+	string rstring;
+	string tstring;
+
+	for(rit = rlist->begin();rit!=rlist->end();rit++)
+	{
+		rstring = (*rit)->GetAntecedent()+"\n";
+		scan_string(rstring.c_str());
+		yyparse();
+		if(parser->GetResult()==1)
+        {
+            cout<<"Trigger rule: "<<(*rit)->GetRuleName()<<"---"<<(*rit)->GetAntecedent()<<" THEN "<<(*rit)->GetConsequent()<<endl;
+        }
+	}
+}
+
 void reasonIndeRules(reason *re,calc::calc_parser *parser)
 {
 
@@ -547,14 +572,10 @@ int main(int argc,char *argv[])
 			
 
             reason *re = new reason();
-			cout<<"test1"<<endl;
             re->InitReasonNetwork();
-			cout<<"test2"<<endl;
             initReasonwork(re,parser);
-			cout<<"test3"<<endl;
 
             PARALIST *pl = re->GetParaList();
-			cout<<"test4"<<endl;
 			/*
             PARALIST::iterator pit;
             string value;
@@ -581,7 +602,9 @@ int main(int argc,char *argv[])
 			*/
 
 			UpdatePara(t,fin,pl);
-			cout<<"test5"<<endl;
+			reasonRules(re,parser);
+			
+
             //reasonIndeRules(re,parser);
             //reasonNestedRules(re,parser);
 
@@ -598,8 +621,8 @@ int main(int argc,char *argv[])
             fin.close();
         }
     }
-
-
+	
+	
     delete parser;
     return n;
 

@@ -110,6 +110,7 @@ public:
 
 	double GetResult();
 	char*GetStrResult();
+	LISTDOUBLE* GetListResult();
 	void ClearStrResult();
 	int GetWrongStat();
 	bool GetLogicResult();
