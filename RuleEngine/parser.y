@@ -28,6 +28,7 @@ values in expressions.
 #include "reason.h"
 #include "calc.h"
 #include "optimize.h"
+#include "oriAllocator.h"
 #define RAND_M 32767
 using namespace calc;
 calc::calc_parser *parser;
@@ -256,7 +257,7 @@ string ConvertListToString(LISTDOUBLE* lb)
     return s;
 }
 
-void updatePara(double t, ifstream& fin, PARALIST* pl)
+void updatePara(oriALlocator* oa, PARALIST* pl, int index)
 {
 	string pstring;
 	string value;
@@ -265,19 +266,18 @@ void updatePara(double t, ifstream& fin, PARALIST* pl)
 	PARALIST::iterator pit;
 	for(pit = pl->begin();pit != pl->end();pit++)
 	{
-		lv = new deque<double>();
-		for(double d = 0;d < t;d++)
-		{
-			fin>>dvalue;
-			lv->push_back(dvalue);
-		}
+		lv = oa->getMemData()->at(index);
+		// for(double d = 0;d < oa->roundLength;d++)
+		// {
+		// 	fin>>dvalue;
+		// 	lv->push_back(dvalue);
+		// }
 		(*pit)->SetListValue(lv);
 		value = ConvertListToString(lv);
         pstring = (*pit)->GetName() + "=" + value+"\n";
         scan_string(pstring.c_str());
         cout<<"The info of para is : "<< pstring<<endl;
         yyparse();
-		delete lv;
 	}
 }
 
@@ -583,14 +583,21 @@ int main(int argc,char *argv[])
             cout<<"现在从该文档中读入数据"<<endl;
             sleep(1);
 
-			double t = 3;
+			int curIndex = 0;
+			double value = 0;
+			bool mflag = false;
+			bool dflag = false;
+			bool rflag = false;
 
-			
+			double lo = 0.8;
+			double hi = 1.5;
+
+			srand((unsigned)time(NULL));
 
             reason *re = new reason();
             re->InitReasonNetwork();
             initReasonwork(re,parser);
-
+			oriAllocator* oa = new oriAllocator();
 			optimize* opt = new optimize();
 			opt->setOpTable(re);
 			opt->testOp();
@@ -621,9 +628,36 @@ int main(int argc,char *argv[])
             }
 			*/
 
-			updatePara(t,fin,pl);
-			reasonRules(re,parser);
-			
+			while(1)
+			{
+				value = lo + static_cast<double>(rand())/(static_cast<double>(RAND_M/(hi-lo)));
+				if(mflag){
+					// for(int index = 0;index < oa->GetInferRound();index++){
+					// 	updatePara(oa,pl,curIndex);
+					// 	reasonRules(re,parser);
+					// 	if(index == oa->GetInferRound()-1)
+					// 		rflag = true;
+					// }
+					if(curIndex == oa->GetInferRound()){
+						curIndex = 0;
+						rflag = true;
+					}
+					if(curIndex < oa->GetInferRound()){
+						updatePara(oa,pl,curIndex);
+						reasonRules(re,parser);
+						curIndex++;
+					}
+					if(dflag && rflag){
+						tc->loadFromDisk();
+						dflag = false;
+						rflag = false;
+					}else{
+						dflag = oa->appendFile(value);
+					}
+				}else{
+					mflag = oa->genMemData(value);
+				}
+			}
 
             //reasonIndeRules(re,parser);
             //reasonNestedRules(re,parser);
@@ -637,8 +671,6 @@ int main(int argc,char *argv[])
             //cout<<"************"<<endl<<endl;
             //delete pl;
             delete re;
-
-            fin.close();
         }
     }
 	
