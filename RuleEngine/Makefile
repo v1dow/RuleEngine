@@ -2,8 +2,17 @@ LEX=flex
 YACC=bison
 CC=g++
 all:test
-test: calc.o calc_parser.o lex.yy.o parser.tab.o reason.o rule.o para.o token.o tinystr.o tinyxmlparser.o tinyxml.o tinyxmlerror.o
-	g++ -o test calc.o calc_parser.o lex.yy.o parser.tab.o symbol.o reason.o rule.o para.o token.o tinystr.o tinyxmlparser.o tinyxml.o tinyxmlerror.o
+test: intermediate.o statOp.o optimize.o calc.o calc_parser.o lex.yy.o parser.tab.o reason.o rule.o para.o token.o tinystr.o tinyxmlparser.o tinyxml.o tinyxmlerror.o
+	g++ -o test intermediate.o statOp.o optimize.o calc.o calc_parser.o lex.yy.o parser.tab.o symbol.o reason.o rule.o para.o token.o tinystr.o tinyxmlparser.o tinyxml.o tinyxmlerror.o
+
+intermediate.o: intermediate.cpp
+	g++ -c intermediate.cpp
+
+statOp.o: statOp.cpp
+	g++ -c statOp.cpp
+
+optimize.o: optimize.cpp
+	g++ -c optimize.cpp
 
 calc.o: calc.cpp  symbol.cpp
 	g++ -c calc.cpp  symbol.cpp

@@ -24,11 +24,24 @@ values in expressions.
 #include <time.h>
 #include <unistd.h>
 #include <vector>
+#include <array>
 #include "reason.h"
 #include "calc.h"
+#include "optimize.h"
 #define RAND_M 32767
 using namespace calc;
 calc::calc_parser *parser;
+
+enum StatOpNo
+{
+    opMAX,
+    opMIN,
+    opMEAN,
+    opMEDIAN,
+    opVAR,
+    opSTD
+};
+
 extern "C"
 {
 	extern int yylex(void);
@@ -243,7 +256,7 @@ string ConvertListToString(LISTDOUBLE* lb)
     return s;
 }
 
-void UpdatePara(double t, ifstream& fin, PARALIST* pl)
+void updatePara(double t, ifstream& fin, PARALIST* pl)
 {
 	string pstring;
 	string value;
@@ -523,6 +536,9 @@ int main(int argc,char *argv[])
     if (parser->create(0)!=1) {
         printf("Create calc_parser failed!\n");
     }
+	
+	array<int,6> opTable{0,0,0,0,0,0};
+
     if(argc == 1)
     {
         cout<<"现在用随机产生的数据进行规则推理:"<<"(每隔三秒推理一次)"<<endl<<endl<<endl;
@@ -575,6 +591,10 @@ int main(int argc,char *argv[])
             re->InitReasonNetwork();
             initReasonwork(re,parser);
 
+			optimize* opt = new optimize();
+			opt->setOpTable(re);
+			opt->testOp();
+
             PARALIST *pl = re->GetParaList();
 			/*
             PARALIST::iterator pit;
@@ -601,7 +621,7 @@ int main(int argc,char *argv[])
             }
 			*/
 
-			UpdatePara(t,fin,pl);
+			updatePara(t,fin,pl);
 			reasonRules(re,parser);
 			
 
