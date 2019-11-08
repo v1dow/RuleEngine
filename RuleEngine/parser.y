@@ -267,13 +267,24 @@ void updatePara(oriAllocator* oa, PARALIST* pl, int index)
 	for(pit = pl->begin();pit != pl->end();pit++)
 	{
 		lv = oa->GetMemData()->at(index);
-		// for(double d = 0;d < oa->roundLength;d++)
-		// {
-		// 	fin>>dvalue;
-		// 	lv->push_back(dvalue);
-		// }
 		(*pit)->SetListValue(lv);
 		value = ConvertListToString(lv);
+        pstring = (*pit)->GetName() + "=" + value+"\n";
+        scan_string(pstring.c_str());
+        cout<<"The info of para is : "<< pstring<<endl;
+        yyparse();
+	}
+}
+
+void updatePara1(PARALIST* pl, double dvalue)
+{
+	string pstring;
+	string value;
+	PARALIST::iterator pit;
+	for(pit = pl->begin();pit != pl->end();pit++)
+	{
+		(*pit)->SetValue(dvalue);
+		value = ConvertToString(dvalue);
         pstring = (*pit)->GetName() + "=" + value+"\n";
         scan_string(pstring.c_str());
         cout<<"The info of para is : "<< pstring<<endl;
@@ -676,34 +687,26 @@ int main(int argc,char *argv[])
 			while(1){
 				value = lo + static_cast<double>(rand())/(static_cast<double>(RAND_MAX/(hi-lo)));
 				cout<<"value: "<<value<<endl;
-				if(mflag){
-					if(curIndex == oa->GetInferRound()){
-						curIndex = 0;
-						mflag = false;
-					}
-					if(curIndex < oa->GetInferRound()){
-						updatePara(oa,pl,curIndex);
-						cout<<"reason Rule: "<<curIndex<<endl;
-						reasonRules(re,parser);
-						curIndex++;
-					}
-				}else{
-					mflag = oa->genMemData(value);
-				}
+				// if(mflag){
+				// 	if(curIndex == oa->GetInferRound()){
+				// 		curIndex = 0;
+				// 		mflag = false;
+				// 	}
+				// 	if(curIndex < oa->GetInferRound()){
+				// 		updatePara(oa,pl,curIndex);
+				// 		cout<<"reason Rule: "<<curIndex<<endl;
+				// 		reasonRules(re,parser);
+				// 		curIndex++;
+				// 	}
+				// }else{
+				// 	mflag = oa->genMemData(value);
+				// }
+				updatePara1(pl,value);
+				reasonRules(re,parser);
+				sleep(3);
 			}
 		
 
-            //reasonIndeRules(re,parser);
-            //reasonNestedRules(re,parser);
-
-//            for(pit= pl->begin();pit!=pl->end();pit++)
-//            {
-
-//                cout<<(*pit)->GetName()<<":"<<(*pit)->GetValue()<<endl;
-//            }
-
-            //cout<<"************"<<endl<<endl;
-            //delete pl;
             delete re;
         //}
     }
