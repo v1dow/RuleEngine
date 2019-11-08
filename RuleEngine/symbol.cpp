@@ -25,7 +25,7 @@ symbol::~symbol()
 	delete[] m_name;
 	if(m_charvalue!=NULL)
 		delete[] m_charvalue;
-	delete [] m_lvalue;
+	delete m_lvalue;
 }
 
 /////////////////////////////////////////////////////////////////////////////
