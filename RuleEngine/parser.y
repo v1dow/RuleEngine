@@ -261,7 +261,6 @@ void updatePara(oriAllocator* oa, PARALIST* pl, int index)
 {
 	string pstring;
 	string value;
-	double dvalue = 0;
 	LISTDOUBLE* lv;
 	PARALIST::iterator pit;
 	for(pit = pl->begin();pit != pl->end();pit++)
@@ -684,24 +683,18 @@ int main(int argc,char *argv[])
 			}
 			*/
 
-			while(1){
+			while(1)
+			{
 				value = lo + static_cast<double>(rand())/(static_cast<double>(RAND_MAX/(hi-lo)));
 				cout<<"value: "<<value<<endl;
-				// if(mflag){
-				// 	if(curIndex == oa->GetInferRound()){
-				// 		curIndex = 0;
-				// 		mflag = false;
-				// 	}
-				// 	if(curIndex < oa->GetInferRound()){
-				// 		updatePara(oa,pl,curIndex);
-				// 		cout<<"reason Rule: "<<curIndex<<endl;
-				// 		reasonRules(re,parser);
-				// 		curIndex++;
-				// 	}
-				// }else{
-				// 	mflag = oa->genMemData(value);
-				// }
-				updatePara1(pl,value);
+				if(mflag){
+					break;
+				}else{
+						mflag = oa->genMemData(value);
+					}
+			}
+			for(int i = 0;i<oa->GetMemData()->size();i++){
+				updatePara(oa,pl,curIndex);
 				reasonRules(re,parser);
 				sleep(3);
 			}
