@@ -570,18 +570,18 @@ int main(int argc,char *argv[])
     if(argc == 2 )
     {
 
-        ifstream fin(argv[1]);
-        if(!fin)
-        {
-            printf("no file data!\n");
-            exit(1);
-        }
+        // ifstream fin(argv[1]);
+        // if(!fin)
+        // {
+        //     printf("no file data!\n");
+        //     exit(1);
+        // }
 
 
         else
         {
-            cout<<"现在从该文档中读入数据"<<endl;
-            sleep(1);
+            //cout<<"现在从该文档中读入数据"<<endl;
+            //sleep(1);
 
 			int curIndex = 0;
 			double value = 0;
