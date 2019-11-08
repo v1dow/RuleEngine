@@ -161,7 +161,7 @@ expr
 	| ID BING STRING			{ $$ = parser->GetBING($1,$3); }	
 	| STRING BING ID			{ $$ = parser->GetBING($1,$3); }	
 	| ID '=' EMPTY				{ parser->setnull($1); }
-	| ID					{ $$= parser->GetIDValue($1);}
+	| ID					{ $$= parser->GetIDValue($1); printf("ID success."); }
 
 	| expr '+' expr				{ $$ = $1 + $3; }
 	| expr '-' expr				{ $$ = $1 - $3; }
@@ -213,7 +213,7 @@ expr
 	;
 listexpr
 	: LISTNUMBER			{ $$ = $1; }
-	| LID '=' listexpr				{ $$ = parser->assignlist($1,$3); }
+	| LID '=' listexpr				{ $$ = parser->assignlist($1,$3); printf("list assign."); }
 	| LID '=' EMPTY				{ parser->setlistnull($1); }
 	| LID					{ $$ = parser->GetLIDValue($1); printf("LID success."); }
 	;
