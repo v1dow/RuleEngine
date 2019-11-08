@@ -1,4 +1,2 @@
-R1:IF MAX(SIN(#p1))>1 THEN p1=[99] 
-R2:IF MIN(COS(#p1))>1 THEN p1=[88]
-R3:IF MAX(COS(#p1))>1 THEN p1=[99]
-R4:IF MAX(SIN(#p1))>1 THEN p1=[99] 
+R1:IF MAX(#p1)>1 THEN p1=[99] 
+R2:IF MAX(#p1)<1 THEN p1=[0]

@@ -257,7 +257,7 @@ string ConvertListToString(LISTDOUBLE* lb)
     return s;
 }
 
-void updatePara(oriALlocator* oa, PARALIST* pl, int index)
+void updatePara(oriAllocator* oa, PARALIST* pl, int index)
 {
 	string pstring;
 	string value;
@@ -266,7 +266,7 @@ void updatePara(oriALlocator* oa, PARALIST* pl, int index)
 	PARALIST::iterator pit;
 	for(pit = pl->begin();pit != pl->end();pit++)
 	{
-		lv = oa->getMemData()->at(index);
+		lv = oa->GetMemData()->at(index);
 		// for(double d = 0;d < oa->roundLength;d++)
 		// {
 		// 	fin>>dvalue;
@@ -578,8 +578,8 @@ int main(int argc,char *argv[])
         // }
 
 
-        else
-        {
+        //else
+        //{
             //cout<<"现在从该文档中读入数据"<<endl;
             //sleep(1);
 
@@ -648,7 +648,7 @@ int main(int argc,char *argv[])
 						curIndex++;
 					}
 					if(dflag && rflag){
-						tc->loadFromDisk();
+						oa->loadFromDisk();
 						dflag = false;
 						rflag = false;
 					}else{
@@ -671,7 +671,7 @@ int main(int argc,char *argv[])
             //cout<<"************"<<endl<<endl;
             //delete pl;
             delete re;
-        }
+        //}
     }
 	
 	

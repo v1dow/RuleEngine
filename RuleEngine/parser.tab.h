@@ -89,7 +89,7 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 54 "parser.y" /* yacc.c:1909  */
+#line 55 "parser.y" /* yacc.c:1909  */
 
 	symbol* sym;
 	double value;
