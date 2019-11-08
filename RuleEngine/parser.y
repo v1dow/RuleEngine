@@ -124,7 +124,7 @@ lines
 	;
 
 line
-	: expr '\n'					{  parser->m_result = (double)$1; }
+	: expr '\n'					{  parser->m_result = (double)$1; printf("get result."); }
 
 	| expr ';'							{  parser->m_result = (double)$1; }
 	| expr ';'	'\n'					{  parser->m_result = (double)$1;}
@@ -171,7 +171,7 @@ expr
 	| expr OR expr				{ $$ = parser->GetOr($1,$3); }
 	| expr LEQL expr			{ $$ = parser->GetLEQL($1,$3); }
 	| expr MEQL expr			{ $$ = parser->GetMEQL($1,$3); }
-	| expr LESS expr			{ $$ = parser->GetLESS($1,$3); }
+	| expr LESS expr			{ $$ = parser->GetLESS($1,$3); printf("< success."); }
 	| expr MORE expr			{ $$ = parser->GetMORE($1,$3); }
 	| expr EQL expr				{ $$ = parser->GetEQL($1,$3); }
 	| expr NOTEQL expr			{ $$ = parser->GetNOTEQL($1,$3); }
@@ -208,14 +208,14 @@ expr
 	| LOG '(' expr ')'			{ $$ = log($3); }
 	| MAX '(' listexpr ')'		{ $$ = parser->GetMax($3); }
 	| MAXS '(' ADDRESS ',' expr ')'		{ $$ = parser->GetMaxs($3,$5); }
-	| MIN '(' listexpr ')'		{ $$ = parser->GetMin($3); }
+	| MIN '(' listexpr ')'		{ $$ = parser->GetMin($3); printf("min success."); }
 	| MEAN '(' listexpr ')'		{ $$ = parser->GetMean($3); }
 	;
 listexpr
 	: LISTNUMBER			{ $$ = $1; }
 	| LID '=' listexpr				{ $$ = parser->assignlist($1,$3); }
 	| LID '=' EMPTY				{ parser->setlistnull($1); }
-	| LID					{ $$ = parser->GetLIDValue($1); }
+	| LID					{ $$ = parser->GetLIDValue($1); printf("LID success."); }
 	;
 strexpr
 	: STRING 				{ if(parser->worktype==0)$$ = $1; }
@@ -389,17 +389,21 @@ void reasonRules(reason *re,calc::calc_parser* parser)
 
 	string rstring;
 	string tstring;
-
+	
 	for(rit = rlist->begin();rit!=rlist->end();rit++)
 	{
 		rstring = (*rit)->GetAntecedent()+"\n";
+		cout<<"rstring: "<<rstring<<endl;
 		scan_string(rstring.c_str());
+		cout<<"scan success"<<endl;
 		yyparse();
+		cout<<"parser success"<<endl;
 		if(parser->GetResult()==1)
         {
             cout<<"Trigger rule: "<<(*rit)->GetRuleName()<<"---"<<(*rit)->GetAntecedent()<<" THEN "<<(*rit)->GetConsequent()<<endl;
         }
 	}
+	cout<<"reasonRule complete."<<endl;
 }
 
 void reasonIndeRules(reason *re,calc::calc_parser *parser)
@@ -630,7 +634,8 @@ int main(int argc,char *argv[])
 
 			while(1)
 			{
-				value = lo + static_cast<double>(rand())/(static_cast<double>(RAND_M/(hi-lo)));
+				value = lo + static_cast<double>(rand())/(static_cast<double>(RAND_MAX/(hi-lo)));
+				cout<<"value: "<<value<<endl;
 				if(mflag){
 					// for(int index = 0;index < oa->GetInferRound();index++){
 					// 	updatePara(oa,pl,curIndex);
@@ -644,18 +649,25 @@ int main(int argc,char *argv[])
 					}
 					if(curIndex < oa->GetInferRound()){
 						updatePara(oa,pl,curIndex);
+						cout<<"reason Rule: "<<curIndex<<endl;
 						reasonRules(re,parser);
 						curIndex++;
 					}
 					if(dflag && rflag){
+						cout<<"loadFromDisk1"<<endl;
 						oa->loadFromDisk();
+						cout<<"loadFromDisk2"<<endl;
 						dflag = false;
 						rflag = false;
 					}else{
+						cout<<"appendfile1"<<endl;
 						dflag = oa->appendFile(value);
+						cout<<"appendfile2"<<endl;
 					}
 				}else{
+					cout<<"genMemData1"<<endl;
 					mflag = oa->genMemData(value);
+					cout<<"genMemData2"<<endl;
 				}
 			}
 

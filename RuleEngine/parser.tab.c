@@ -1489,7 +1489,7 @@ yyreduce:
     {
         case 4:
 #line 127 "parser.y" /* yacc.c:1646  */
-    {  parser->m_result = (double)(yyvsp[-1].value); }
+    {  parser->m_result = (double)(yyvsp[-1].value); printf("get result."); }
 #line 1494 "parser.tab.c" /* yacc.c:1646  */
     break;
 
@@ -1699,7 +1699,7 @@ yyreduce:
 
   case 41:
 #line 174 "parser.y" /* yacc.c:1646  */
-    { (yyval.value) = parser->GetLESS((yyvsp[-2].value),(yyvsp[0].value)); }
+    { (yyval.value) = parser->GetLESS((yyvsp[-2].value),(yyvsp[0].value)); printf("< success."); }
 #line 1704 "parser.tab.c" /* yacc.c:1646  */
     break;
 
@@ -1891,7 +1891,7 @@ yyreduce:
 
   case 73:
 #line 211 "parser.y" /* yacc.c:1646  */
-    { (yyval.value) = parser->GetMin((yyvsp[-1].listvalue)); }
+    { (yyval.value) = parser->GetMin((yyvsp[-1].listvalue)); printf("min success."); }
 #line 1896 "parser.tab.c" /* yacc.c:1646  */
     break;
 
@@ -1921,7 +1921,7 @@ yyreduce:
 
   case 78:
 #line 218 "parser.y" /* yacc.c:1646  */
-    { (yyval.listvalue) = parser->GetLIDValue((yyvsp[0].sym)); }
+    { (yyval.listvalue) = parser->GetLIDValue((yyvsp[0].sym)); printf("LID success."); }
 #line 1926 "parser.tab.c" /* yacc.c:1646  */
     break;
 
@@ -2365,17 +2365,21 @@ void reasonRules(reason *re,calc::calc_parser* parser)
 
 	string rstring;
 	string tstring;
-
+	
 	for(rit = rlist->begin();rit!=rlist->end();rit++)
 	{
 		rstring = (*rit)->GetAntecedent()+"\n";
+		cout<<"rstring: "<<rstring<<endl;
 		scan_string(rstring.c_str());
+		cout<<"scan success"<<endl;
 		yyparse();
+		cout<<"parser success"<<endl;
 		if(parser->GetResult()==1)
         {
             cout<<"Trigger rule: "<<(*rit)->GetRuleName()<<"---"<<(*rit)->GetAntecedent()<<" THEN "<<(*rit)->GetConsequent()<<endl;
         }
 	}
+	cout<<"reasonRule complete."<<endl;
 }
 
 void reasonIndeRules(reason *re,calc::calc_parser *parser)
@@ -2606,7 +2610,8 @@ int main(int argc,char *argv[])
 
 			while(1)
 			{
-				value = lo + static_cast<double>(rand())/(static_cast<double>(RAND_M/(hi-lo)));
+				value = lo + static_cast<double>(rand())/(static_cast<double>(RAND_MAX/(hi-lo)));
+				cout<<"value: "<<value<<endl;
 				if(mflag){
 					// for(int index = 0;index < oa->GetInferRound();index++){
 					// 	updatePara(oa,pl,curIndex);
@@ -2620,18 +2625,27 @@ int main(int argc,char *argv[])
 					}
 					if(curIndex < oa->GetInferRound()){
 						updatePara(oa,pl,curIndex);
+						cout<<"reason Rule: "<<curIndex<<endl;
 						reasonRules(re,parser);
 						curIndex++;
+						cout<<"wait for 3 seconds"<<endl;
+						sleep(3);
 					}
 					if(dflag && rflag){
+						cout<<"loadFromDisk1"<<endl;
 						oa->loadFromDisk();
+						cout<<"loadFromDisk2"<<endl;
 						dflag = false;
 						rflag = false;
 					}else{
+						cout<<"appendfile1"<<endl;
 						dflag = oa->appendFile(value);
+						cout<<"appendfile2"<<endl;
 					}
 				}else{
+					cout<<"genMemData1"<<endl;
 					mflag = oa->genMemData(value);
+					cout<<"genMemData2"<<endl;
 				}
 			}
 
