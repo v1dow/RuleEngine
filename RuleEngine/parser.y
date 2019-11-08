@@ -632,6 +632,7 @@ int main(int argc,char *argv[])
             }
 			*/
 
+			/*
 			while(1)
 			{
 				value = lo + static_cast<double>(rand())/(static_cast<double>(RAND_MAX/(hi-lo)));
@@ -670,6 +671,27 @@ int main(int argc,char *argv[])
 					cout<<"genMemData2"<<endl;
 				}
 			}
+			*/
+
+			while(1){
+				value = lo + static_cast<double>(rand())/(static_cast<double>(RAND_MAX/(hi-lo)));
+				cout<<"value: "<<value<<endl;
+				if(mflag){
+					if(curIndex == oa->GetInferRound()){
+						curIndex = 0;
+						mflag = false;
+					}
+					if(curIndex < oa->GetInferRound()){
+						updatePara(oa,pl,curIndex);
+						cout<<"reason Rule: "<<curIndex<<endl;
+						reasonRules(re,parser);
+						curIndex++;
+					}
+				}else{
+					mflag = oa->genMemData(value);
+				}
+			}
+		
 
             //reasonIndeRules(re,parser);
             //reasonNestedRules(re,parser);
