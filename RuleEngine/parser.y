@@ -206,7 +206,7 @@ expr
 	| POW '(' expr ',' expr ')'		{ $$ = parser->exponent2($3,$5); }
 	| EXP '(' expr ')'			{ $$ = exp($3); }
 	| LOG '(' expr ')'			{ $$ = log($3); }
-	| MAX '(' listexpr ')'		{ $$ = parser->GetMax($3); printf("Max value is: %f",(double)parser->GetMax($3)); }
+	| MAX '(' listexpr ')'		{ $$ = parser->GetMax($3); }
 	| MAXS '(' ADDRESS ',' expr ')'		{ $$ = parser->GetMaxs($3,$5); }
 	| MIN '(' listexpr ')'		{ $$ = parser->GetMin($3); printf("min success."); }
 	| MEAN '(' listexpr ')'		{ $$ = parser->GetMean($3); }
@@ -386,6 +386,24 @@ void changeParaValue(reason *re,rule *tmpRule)
     }
 }
 //change
+
+void testReason(reason* re, calc::calc_parser* parser)
+{
+	RULELIST *rlist = re->GetRuleList();
+	RULELIST::iterator rit;
+
+	string rstring;
+
+	for(rit = rlist->begin();rit!=rlist->end();rit++)
+	{
+		rstring = (*rit)->GetAntecedent()+"\n";
+		cout<<"rstring: "<<rstring<<endl;
+		scan_string(rstring.c_str());
+		yyparse();
+		cout<<"parser result: "<<parser->GetResult()<<endl;
+	}
+
+}
 
 void reasonRules(reason *re,calc::calc_parser* parser)
 {
@@ -695,7 +713,8 @@ int main(int argc,char *argv[])
 			}
 			for(int i = 0;i<oa->GetMemData()->size();i++){
 				updatePara(oa,pl,curIndex);
-				reasonRules(re,parser);
+				//reasonRules(re,parser);
+				testReason(re,parser);
 				sleep(3);
 			}
 		
