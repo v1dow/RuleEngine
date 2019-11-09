@@ -74,13 +74,9 @@ char* calc_parser::assignchar(symbol* id, char* value)
 }
 LISTDOUBLE* calc_parser::assignlist(symbol* id, LISTDOUBLE* ld)
 {
-	assert(id != NULL && !ld->empty());
+	assert(id != NULL);
 	id->m_bHasbeenInit = true;
-	if(!id->m_lvalue->empty())
-	{
-		delete id->m_lvalue;
-		id->m_lvalue = NULL;
-	}
+	delete id->m_lvalue;
 	id->m_lvalue = new deque<double>(*ld);
 	return id->m_lvalue;
 }
