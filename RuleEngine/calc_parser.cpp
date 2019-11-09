@@ -127,6 +127,8 @@ LISTDOUBLE* calc_parser::GetLIDValue(symbol* id)
 	if(!id->m_bHasbeenInit)
 		m_iWrong=2;	
 	cout<<"GetLIDValue, id name:"<<id->m_name<<endl;
+	if(id->m_lvalue == NULL)
+		cout<<"nullpointer."<<endl;
 	return id->m_lvalue;
 }
 char*calc_parser::AddString(char* a1,char* a2)

@@ -1645,7 +1645,7 @@ yyreduce:
 
   case 32:
 #line 164 "parser.y" /* yacc.c:1646  */
-    { (yyval.value)= parser->GetIDValue((yyvsp[0].sym));}
+    { (yyval.value)= parser->GetIDValue((yyvsp[0].sym)); printf("ID success."); }
 #line 1650 "parser.tab.c" /* yacc.c:1646  */
     break;
 
@@ -1879,7 +1879,7 @@ yyreduce:
 
   case 71:
 #line 209 "parser.y" /* yacc.c:1646  */
-    { (yyval.value) = parser->GetMax((yyvsp[-1].listvalue)); }
+    { (yyval.value) = parser->GetMax((yyvsp[-1].listvalue)); printf("Max value is: %f",(double)parser->GetMax((yyvsp[-1].listvalue))); }
 #line 1884 "parser.tab.c" /* yacc.c:1646  */
     break;
 
@@ -1909,7 +1909,7 @@ yyreduce:
 
   case 76:
 #line 216 "parser.y" /* yacc.c:1646  */
-    { (yyval.listvalue) = parser->assignlist((yyvsp[-2].sym),(yyvsp[0].listvalue)); }
+    { (yyval.listvalue) = parser->assignlist((yyvsp[-2].sym),(yyvsp[0].listvalue)); printf("list assign."); }
 #line 1914 "parser.tab.c" /* yacc.c:1646  */
     break;
 
@@ -2237,19 +2237,29 @@ void updatePara(oriAllocator* oa, PARALIST* pl, int index)
 {
 	string pstring;
 	string value;
-	double dvalue = 0;
 	LISTDOUBLE* lv;
 	PARALIST::iterator pit;
 	for(pit = pl->begin();pit != pl->end();pit++)
 	{
 		lv = oa->GetMemData()->at(index);
-		// for(double d = 0;d < oa->roundLength;d++)
-		// {
-		// 	fin>>dvalue;
-		// 	lv->push_back(dvalue);
-		// }
 		(*pit)->SetListValue(lv);
 		value = ConvertListToString(lv);
+        pstring = (*pit)->GetName() + "=" + value+"\n";
+        scan_string(pstring.c_str());
+        cout<<"The info of para is : "<< pstring<<endl;
+        yyparse();
+	}
+}
+
+void updatePara1(PARALIST* pl, double dvalue)
+{
+	string pstring;
+	string value;
+	PARALIST::iterator pit;
+	for(pit = pl->begin();pit != pl->end();pit++)
+	{
+		(*pit)->SetValue(dvalue);
+		value = ConvertToString(dvalue);
         pstring = (*pit)->GetName() + "=" + value+"\n";
         scan_string(pstring.c_str());
         cout<<"The info of para is : "<< pstring<<endl;
@@ -2608,6 +2618,7 @@ int main(int argc,char *argv[])
             }
 			*/
 
+			/*
 			while(1)
 			{
 				value = lo + static_cast<double>(rand())/(static_cast<double>(RAND_MAX/(hi-lo)));
@@ -2628,8 +2639,6 @@ int main(int argc,char *argv[])
 						cout<<"reason Rule: "<<curIndex<<endl;
 						reasonRules(re,parser);
 						curIndex++;
-						cout<<"wait for 3 seconds"<<endl;
-						sleep(3);
 					}
 					if(dflag && rflag){
 						cout<<"loadFromDisk1"<<endl;
@@ -2648,18 +2657,25 @@ int main(int argc,char *argv[])
 					cout<<"genMemData2"<<endl;
 				}
 			}
+			*/
 
-            //reasonIndeRules(re,parser);
-            //reasonNestedRules(re,parser);
+			while(1)
+			{
+				value = lo + static_cast<double>(rand())/(static_cast<double>(RAND_MAX/(hi-lo)));
+				cout<<"value: "<<value<<endl;
+				if(mflag){
+					break;
+				}else{
+						mflag = oa->genMemData(value);
+					}
+			}
+			for(int i = 0;i<oa->GetMemData()->size();i++){
+				updatePara(oa,pl,curIndex);
+				reasonRules(re,parser);
+				sleep(3);
+			}
+		
 
-//            for(pit= pl->begin();pit!=pl->end();pit++)
-//            {
-
-//                cout<<(*pit)->GetName()<<":"<<(*pit)->GetValue()<<endl;
-//            }
-
-            //cout<<"************"<<endl<<endl;
-            //delete pl;
             delete re;
         //}
     }
