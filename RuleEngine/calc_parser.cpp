@@ -82,7 +82,6 @@ LISTDOUBLE* calc_parser::assignlist(symbol* id, LISTDOUBLE* ld)
 		id->m_lvalue = NULL;
 	}
 	id->m_lvalue = new deque<double>(*ld);
-	delete ld;
 	return id->m_lvalue;
 }
 void calc_parser::setnull(symbol* id)
