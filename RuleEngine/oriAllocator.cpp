@@ -90,8 +90,8 @@ bool oriAllocator::appendFile(double value)
 void oriAllocator::loadFromDisk()
 {
     double value;
-    cout<<"lengthCounter:"<<lengthCounter<<endl;
-    cout<<"roundCounter:"<<roundCounter<<endl;
+    lengthCounter = 0;
+    roundCounter = 0;
     
     
     ifstream fin("test.txt");

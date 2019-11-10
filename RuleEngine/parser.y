@@ -124,7 +124,7 @@ lines
 	;
 
 line
-	: expr '\n'					{  parser->m_result = (double)$1; printf("get result."); }
+	: expr '\n'					{  parser->m_result = (double)$1; }
 
 	| expr ';'							{  parser->m_result = (double)$1; }
 	| expr ';'	'\n'					{  parser->m_result = (double)$1;}
@@ -161,7 +161,7 @@ expr
 	| ID BING STRING			{ $$ = parser->GetBING($1,$3); }	
 	| STRING BING ID			{ $$ = parser->GetBING($1,$3); }	
 	| ID '=' EMPTY				{ parser->setnull($1); }
-	| ID					{ $$= parser->GetIDValue($1); printf("ID success."); }
+	| ID					{ $$= parser->GetIDValue($1); }
 
 	| expr '+' expr				{ $$ = $1 + $3; }
 	| expr '-' expr				{ $$ = $1 - $3; }
@@ -171,7 +171,7 @@ expr
 	| expr OR expr				{ $$ = parser->GetOr($1,$3); }
 	| expr LEQL expr			{ $$ = parser->GetLEQL($1,$3); }
 	| expr MEQL expr			{ $$ = parser->GetMEQL($1,$3); }
-	| expr LESS expr			{ $$ = parser->GetLESS($1,$3); printf("< success."); }
+	| expr LESS expr			{ $$ = parser->GetLESS($1,$3); }
 	| expr MORE expr			{ $$ = parser->GetMORE($1,$3); }
 	| expr EQL expr				{ $$ = parser->GetEQL($1,$3); }
 	| expr NOTEQL expr			{ $$ = parser->GetNOTEQL($1,$3); }
@@ -208,14 +208,14 @@ expr
 	| LOG '(' expr ')'			{ $$ = log($3); }
 	| MAX '(' listexpr ')'		{ $$ = parser->GetMax($3); }
 	| MAXS '(' ADDRESS ',' expr ')'		{ $$ = parser->GetMaxs($3,$5); }
-	| MIN '(' listexpr ')'		{ $$ = parser->GetMin($3); printf("min success."); }
+	| MIN '(' listexpr ')'		{ $$ = parser->GetMin($3); }
 	| MEAN '(' listexpr ')'		{ $$ = parser->GetMean($3); }
 	;
 listexpr
 	: LISTNUMBER			{ $$ = $1; }
-	| LID '=' listexpr				{ $$ = parser->assignlist($1,$3); printf("list assign."); }
+	| LID '=' listexpr				{ $$ = parser->assignlist($1,$3); }
 	| LID '=' EMPTY				{ parser->setlistnull($1); }
-	| LID					{ $$ = parser->GetLIDValue($1); printf("LID success."); }
+	| LID					{ $$ = parser->GetLIDValue($1); }
 	;
 strexpr
 	: STRING 				{ if(parser->worktype==0)$$ = $1; }
@@ -688,14 +688,10 @@ int main(int argc,char *argv[])
 						dflag = false;
 						rflag = false;
 					}else{
-						cout<<"appendfile1"<<endl;
 						dflag = oa->appendFile(value);
-						cout<<"appendfile2"<<endl;
 					}
 				}else{
-					cout<<"genMemData1"<<endl;
 					mflag = oa->genMemData(value);
-					cout<<"genMemData2"<<endl;
 				}
 			}
 
