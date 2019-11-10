@@ -79,6 +79,7 @@ LISTDOUBLE* calc_parser::assignlist(symbol* id, LISTDOUBLE* ld)
 	delete id->m_lvalue;
 	id->m_lvalue = new deque<double>(*ld);
 	cout<<"assignlist, id name: "<<id->m_name<<endl;
+	//delete ld;
 	return id->m_lvalue;
 }
 void calc_parser::setnull(symbol* id)
@@ -257,8 +258,8 @@ double calc_parser::GetMax(LISTDOUBLE*d)
 		t=d->at(i);
 		if(t>max)max=t;		
 	}
-	d->clear();
-	delete d;
+	//d->clear();
+	//delete d;
 	return max;
 }
 double calc_parser::GetMaxs(double* address, double value)
