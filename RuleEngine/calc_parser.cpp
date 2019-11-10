@@ -283,8 +283,8 @@ double calc_parser::GetMin(LISTDOUBLE*d)
 		t=d->at(i);
 		if(t<min)min=t;		
 	}
-	d->clear();
-	delete d;
+	//d->clear();
+	//delete d;
 	return min;
 }
 double calc_parser::GetMean(LISTDOUBLE*d)
@@ -299,8 +299,8 @@ double calc_parser::GetMean(LISTDOUBLE*d)
 		t=d->at(i);
 		total+=t;		
 	}
-	d->clear();
-	delete d;
+	//d->clear();
+	//delete d;
 	return total/count;
 }
 int calc_parser::GetAnd(int a1,int a2)

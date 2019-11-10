@@ -660,7 +660,6 @@ int main(int argc,char *argv[])
             }
 			*/
 
-			/*
 			while(1)
 			{
 				value = lo + static_cast<double>(rand())/(static_cast<double>(RAND_MAX/(hi-lo)));
@@ -699,24 +698,23 @@ int main(int argc,char *argv[])
 					cout<<"genMemData2"<<endl;
 				}
 			}
-			*/
 
-			while(1)
-			{
-				value = lo + static_cast<double>(rand())/(static_cast<double>(RAND_MAX/(hi-lo)));
-				cout<<"value: "<<value<<endl;
-				if(mflag){
-					break;
-				}else{
-						mflag = oa->genMemData(value);
-					}
-			}
-			for(int i = 0;i<oa->GetMemData()->size();i++){
-				updatePara(oa,pl,curIndex);
-				//reasonRules(re,parser);
-				testReason(re,parser);
-				sleep(3);
-			}
+			// while(1)
+			// {
+			// 	value = lo + static_cast<double>(rand())/(static_cast<double>(RAND_MAX/(hi-lo)));
+			// 	cout<<"value: "<<value<<endl;
+			// 	if(mflag){
+			// 		break;
+			// 	}else{
+			// 			mflag = oa->genMemData(value);
+			// 		}
+			// }
+			// for(int i = 0;i<oa->GetMemData()->size();i++){
+			// 	updatePara(oa,pl,curIndex);
+			// 	//reasonRules(re,parser);
+			// 	testReason(re,parser);
+			// 	sleep(3);
+			// }
 		
 
             delete re;
