@@ -90,6 +90,9 @@ values in expressions.
 #include <unistd.h>
 #include <vector>
 #include <array>
+#include <thread>
+#include <mutex>
+#include <condition_variable>
 #include "reason.h"
 #include "calc.h"
 #include "optimize.h"
@@ -97,6 +100,11 @@ values in expressions.
 #define RAND_M 32767
 using namespace calc;
 calc::calc_parser *parser;
+
+mutex mtx;
+condition_variable cv;
+bool ready = false;
+bool processed = false;
 
 enum StatOpNo
 {
@@ -116,7 +124,7 @@ extern "C"
 	extern void delete_buffer();
 }
 
-#line 120 "parser.tab.c" /* yacc.c:339  */
+#line 128 "parser.tab.c" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -195,7 +203,7 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 55 "parser.y" /* yacc.c:355  */
+#line 63 "parser.y" /* yacc.c:355  */
 
 	symbol* sym;
 	double value;
@@ -203,7 +211,7 @@ union YYSTYPE
 	char*	strvalue;
 	double* address;
 
-#line 207 "parser.tab.c" /* yacc.c:355  */
+#line 215 "parser.tab.c" /* yacc.c:355  */
 };
 
 typedef union YYSTYPE YYSTYPE;
@@ -220,7 +228,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 224 "parser.tab.c" /* yacc.c:358  */
+#line 232 "parser.tab.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -521,15 +529,15 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,   122,   122,   123,   127,   129,   130,   131,   132,   133,
-     134,   135,   136,   137,   138,   139,   142,   143,   146,   147,
-     150,   151,   152,   153,   154,   155,   158,   159,   160,   161,
-     162,   163,   164,   166,   167,   168,   169,   170,   171,   172,
-     173,   174,   175,   176,   177,   179,   181,   182,   183,   184,
-     186,   187,   188,   189,   191,   192,   193,   194,   196,   197,
-     198,   199,   200,   201,   202,   203,   204,   205,   206,   207,
-     208,   209,   210,   211,   212,   215,   216,   217,   218,   221,
-     222,   223,   224,   225,   226,   227,   228
+       0,   130,   130,   131,   135,   137,   138,   139,   140,   141,
+     142,   143,   144,   145,   146,   147,   150,   151,   154,   155,
+     158,   159,   160,   161,   162,   163,   166,   167,   168,   169,
+     170,   171,   172,   174,   175,   176,   177,   178,   179,   180,
+     181,   182,   183,   184,   185,   187,   189,   190,   191,   192,
+     194,   195,   196,   197,   199,   200,   201,   202,   204,   205,
+     206,   207,   208,   209,   210,   211,   212,   213,   214,   215,
+     216,   217,   218,   219,   220,   223,   224,   225,   226,   229,
+     230,   231,   232,   233,   234,   235,   236
 };
 #endif
 
@@ -1488,493 +1496,493 @@ yyreduce:
   switch (yyn)
     {
         case 4:
-#line 127 "parser.y" /* yacc.c:1646  */
+#line 135 "parser.y" /* yacc.c:1646  */
     {  parser->m_result = (double)(yyvsp[-1].value); }
-#line 1494 "parser.tab.c" /* yacc.c:1646  */
+#line 1502 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 5:
-#line 129 "parser.y" /* yacc.c:1646  */
+#line 137 "parser.y" /* yacc.c:1646  */
     {  parser->m_result = (double)(yyvsp[-1].value); }
-#line 1500 "parser.tab.c" /* yacc.c:1646  */
+#line 1508 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 6:
-#line 130 "parser.y" /* yacc.c:1646  */
+#line 138 "parser.y" /* yacc.c:1646  */
     {  parser->m_result = (double)(yyvsp[-2].value);}
-#line 1506 "parser.tab.c" /* yacc.c:1646  */
+#line 1514 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 7:
-#line 131 "parser.y" /* yacc.c:1646  */
+#line 139 "parser.y" /* yacc.c:1646  */
     {;}
-#line 1512 "parser.tab.c" /* yacc.c:1646  */
+#line 1520 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 10:
-#line 134 "parser.y" /* yacc.c:1646  */
+#line 142 "parser.y" /* yacc.c:1646  */
     {  if(parser->worktype==0){parser->m_strresult = (char*)(yyvsp[-1].strvalue);}  else parser->m_strresult=NULL;}
-#line 1518 "parser.tab.c" /* yacc.c:1646  */
+#line 1526 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 11:
-#line 135 "parser.y" /* yacc.c:1646  */
+#line 143 "parser.y" /* yacc.c:1646  */
     { if(parser->worktype==0){parser->m_strresult = (char*)(yyvsp[-2].strvalue); } else parser->m_strresult=NULL;}
-#line 1524 "parser.tab.c" /* yacc.c:1646  */
+#line 1532 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 12:
-#line 136 "parser.y" /* yacc.c:1646  */
+#line 144 "parser.y" /* yacc.c:1646  */
     {  parser->m_lresult = (LISTDOUBLE*)(yyvsp[-1].listvalue); }
-#line 1530 "parser.tab.c" /* yacc.c:1646  */
+#line 1538 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 13:
-#line 137 "parser.y" /* yacc.c:1646  */
+#line 145 "parser.y" /* yacc.c:1646  */
     {  parser->m_lresult = (LISTDOUBLE*)(yyvsp[-2].listvalue);}
-#line 1536 "parser.tab.c" /* yacc.c:1646  */
+#line 1544 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 14:
-#line 138 "parser.y" /* yacc.c:1646  */
+#line 146 "parser.y" /* yacc.c:1646  */
     {  parser->m_result = (double)(yyvsp[-1].value);}
-#line 1542 "parser.tab.c" /* yacc.c:1646  */
+#line 1550 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 15:
-#line 139 "parser.y" /* yacc.c:1646  */
+#line 147 "parser.y" /* yacc.c:1646  */
     {  yyerrok; }
-#line 1548 "parser.tab.c" /* yacc.c:1646  */
+#line 1556 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 16:
-#line 142 "parser.y" /* yacc.c:1646  */
+#line 150 "parser.y" /* yacc.c:1646  */
     { (yyval.value)=(yyvsp[0].value); }
-#line 1554 "parser.tab.c" /* yacc.c:1646  */
+#line 1562 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 17:
-#line 143 "parser.y" /* yacc.c:1646  */
+#line 151 "parser.y" /* yacc.c:1646  */
     { (yyval.value) = parser->assign((yyvsp[-2].sym), (yyvsp[0].value)); }
-#line 1560 "parser.tab.c" /* yacc.c:1646  */
+#line 1568 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 18:
-#line 146 "parser.y" /* yacc.c:1646  */
+#line 154 "parser.y" /* yacc.c:1646  */
     { (yyval.value) = (yyvsp[-1].value); }
-#line 1566 "parser.tab.c" /* yacc.c:1646  */
+#line 1574 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 19:
-#line 147 "parser.y" /* yacc.c:1646  */
+#line 155 "parser.y" /* yacc.c:1646  */
     { if((yyvsp[0].value)!=0)(yyval.value) =1; else (yyval.value) =0; }
-#line 1572 "parser.tab.c" /* yacc.c:1646  */
+#line 1580 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 20:
-#line 150 "parser.y" /* yacc.c:1646  */
+#line 158 "parser.y" /* yacc.c:1646  */
     {;}
-#line 1578 "parser.tab.c" /* yacc.c:1646  */
+#line 1586 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 21:
-#line 151 "parser.y" /* yacc.c:1646  */
+#line 159 "parser.y" /* yacc.c:1646  */
     {;}
-#line 1584 "parser.tab.c" /* yacc.c:1646  */
+#line 1592 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 22:
-#line 152 "parser.y" /* yacc.c:1646  */
+#line 160 "parser.y" /* yacc.c:1646  */
     {;}
-#line 1590 "parser.tab.c" /* yacc.c:1646  */
+#line 1598 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 23:
-#line 153 "parser.y" /* yacc.c:1646  */
+#line 161 "parser.y" /* yacc.c:1646  */
     {;}
-#line 1596 "parser.tab.c" /* yacc.c:1646  */
+#line 1604 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 24:
-#line 154 "parser.y" /* yacc.c:1646  */
+#line 162 "parser.y" /* yacc.c:1646  */
     {;}
-#line 1602 "parser.tab.c" /* yacc.c:1646  */
+#line 1610 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 25:
-#line 155 "parser.y" /* yacc.c:1646  */
+#line 163 "parser.y" /* yacc.c:1646  */
     {;}
-#line 1608 "parser.tab.c" /* yacc.c:1646  */
+#line 1616 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 26:
-#line 158 "parser.y" /* yacc.c:1646  */
+#line 166 "parser.y" /* yacc.c:1646  */
     { (yyval.value) = parser->assign((yyvsp[-2].sym),(yyvsp[0].value)); }
-#line 1614 "parser.tab.c" /* yacc.c:1646  */
+#line 1622 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 27:
-#line 159 "parser.y" /* yacc.c:1646  */
+#line 167 "parser.y" /* yacc.c:1646  */
     { (yyval.value) = parser->GetLIAN((yyvsp[-2].sym),(yyvsp[0].strvalue)); }
-#line 1620 "parser.tab.c" /* yacc.c:1646  */
+#line 1628 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 28:
-#line 160 "parser.y" /* yacc.c:1646  */
+#line 168 "parser.y" /* yacc.c:1646  */
     { (yyval.value) = parser->GetLIAN((yyvsp[-2].strvalue),(yyvsp[0].sym)); }
-#line 1626 "parser.tab.c" /* yacc.c:1646  */
+#line 1634 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 29:
-#line 161 "parser.y" /* yacc.c:1646  */
+#line 169 "parser.y" /* yacc.c:1646  */
     { (yyval.value) = parser->GetBING((yyvsp[-2].sym),(yyvsp[0].strvalue)); }
-#line 1632 "parser.tab.c" /* yacc.c:1646  */
+#line 1640 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 30:
-#line 162 "parser.y" /* yacc.c:1646  */
+#line 170 "parser.y" /* yacc.c:1646  */
     { (yyval.value) = parser->GetBING((yyvsp[-2].strvalue),(yyvsp[0].sym)); }
-#line 1638 "parser.tab.c" /* yacc.c:1646  */
+#line 1646 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 31:
-#line 163 "parser.y" /* yacc.c:1646  */
+#line 171 "parser.y" /* yacc.c:1646  */
     { parser->setnull((yyvsp[-2].sym)); }
-#line 1644 "parser.tab.c" /* yacc.c:1646  */
+#line 1652 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 32:
-#line 164 "parser.y" /* yacc.c:1646  */
+#line 172 "parser.y" /* yacc.c:1646  */
     { (yyval.value)= parser->GetIDValue((yyvsp[0].sym)); }
-#line 1650 "parser.tab.c" /* yacc.c:1646  */
+#line 1658 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 33:
-#line 166 "parser.y" /* yacc.c:1646  */
+#line 174 "parser.y" /* yacc.c:1646  */
     { (yyval.value) = (yyvsp[-2].value) + (yyvsp[0].value); }
-#line 1656 "parser.tab.c" /* yacc.c:1646  */
+#line 1664 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 34:
-#line 167 "parser.y" /* yacc.c:1646  */
+#line 175 "parser.y" /* yacc.c:1646  */
     { (yyval.value) = (yyvsp[-2].value) - (yyvsp[0].value); }
-#line 1662 "parser.tab.c" /* yacc.c:1646  */
+#line 1670 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 35:
-#line 168 "parser.y" /* yacc.c:1646  */
+#line 176 "parser.y" /* yacc.c:1646  */
     { (yyval.value) = (yyvsp[-2].value) * (yyvsp[0].value); }
-#line 1668 "parser.tab.c" /* yacc.c:1646  */
+#line 1676 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 36:
-#line 169 "parser.y" /* yacc.c:1646  */
+#line 177 "parser.y" /* yacc.c:1646  */
     { (yyval.value) = parser->divide((yyvsp[-2].value), (yyvsp[0].value));}
-#line 1674 "parser.tab.c" /* yacc.c:1646  */
+#line 1682 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 37:
-#line 170 "parser.y" /* yacc.c:1646  */
+#line 178 "parser.y" /* yacc.c:1646  */
     { (yyval.value) = parser->GetAnd((yyvsp[-2].value),(yyvsp[0].value)); }
-#line 1680 "parser.tab.c" /* yacc.c:1646  */
+#line 1688 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 38:
-#line 171 "parser.y" /* yacc.c:1646  */
+#line 179 "parser.y" /* yacc.c:1646  */
     { (yyval.value) = parser->GetOr((yyvsp[-2].value),(yyvsp[0].value)); }
-#line 1686 "parser.tab.c" /* yacc.c:1646  */
+#line 1694 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 39:
-#line 172 "parser.y" /* yacc.c:1646  */
+#line 180 "parser.y" /* yacc.c:1646  */
     { (yyval.value) = parser->GetLEQL((yyvsp[-2].value),(yyvsp[0].value)); }
-#line 1692 "parser.tab.c" /* yacc.c:1646  */
+#line 1700 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 40:
-#line 173 "parser.y" /* yacc.c:1646  */
+#line 181 "parser.y" /* yacc.c:1646  */
     { (yyval.value) = parser->GetMEQL((yyvsp[-2].value),(yyvsp[0].value)); }
-#line 1698 "parser.tab.c" /* yacc.c:1646  */
+#line 1706 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 41:
-#line 174 "parser.y" /* yacc.c:1646  */
+#line 182 "parser.y" /* yacc.c:1646  */
     { (yyval.value) = parser->GetLESS((yyvsp[-2].value),(yyvsp[0].value)); }
-#line 1704 "parser.tab.c" /* yacc.c:1646  */
+#line 1712 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 42:
-#line 175 "parser.y" /* yacc.c:1646  */
+#line 183 "parser.y" /* yacc.c:1646  */
     { (yyval.value) = parser->GetMORE((yyvsp[-2].value),(yyvsp[0].value)); }
-#line 1710 "parser.tab.c" /* yacc.c:1646  */
+#line 1718 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 43:
-#line 176 "parser.y" /* yacc.c:1646  */
+#line 184 "parser.y" /* yacc.c:1646  */
     { (yyval.value) = parser->GetEQL((yyvsp[-2].value),(yyvsp[0].value)); }
-#line 1716 "parser.tab.c" /* yacc.c:1646  */
+#line 1724 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 44:
-#line 177 "parser.y" /* yacc.c:1646  */
+#line 185 "parser.y" /* yacc.c:1646  */
     { (yyval.value) = parser->GetNOTEQL((yyvsp[-2].value),(yyvsp[0].value)); }
-#line 1722 "parser.tab.c" /* yacc.c:1646  */
+#line 1730 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 45:
-#line 179 "parser.y" /* yacc.c:1646  */
+#line 187 "parser.y" /* yacc.c:1646  */
     { (yyval.value) = parser->GetNot((yyvsp[0].value)); }
-#line 1728 "parser.tab.c" /* yacc.c:1646  */
+#line 1736 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 46:
-#line 181 "parser.y" /* yacc.c:1646  */
+#line 189 "parser.y" /* yacc.c:1646  */
     { (yyval.value) = parser->GetEQL((yyvsp[-2].strvalue),(yyvsp[0].strvalue)); }
-#line 1734 "parser.tab.c" /* yacc.c:1646  */
+#line 1742 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 47:
-#line 182 "parser.y" /* yacc.c:1646  */
+#line 190 "parser.y" /* yacc.c:1646  */
     { (yyval.value) = parser->GetEQL((yyvsp[-2].sym),(yyvsp[0].strvalue)); }
-#line 1740 "parser.tab.c" /* yacc.c:1646  */
+#line 1748 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 48:
-#line 183 "parser.y" /* yacc.c:1646  */
+#line 191 "parser.y" /* yacc.c:1646  */
     { (yyval.value) = parser->GetEQL((yyvsp[-2].strvalue),(yyvsp[0].sym)); }
-#line 1746 "parser.tab.c" /* yacc.c:1646  */
+#line 1754 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 49:
-#line 184 "parser.y" /* yacc.c:1646  */
+#line 192 "parser.y" /* yacc.c:1646  */
     { (yyval.value) = parser->GetEQL((yyvsp[-2].sym),(yyvsp[0].sym)); }
-#line 1752 "parser.tab.c" /* yacc.c:1646  */
+#line 1760 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 50:
-#line 186 "parser.y" /* yacc.c:1646  */
+#line 194 "parser.y" /* yacc.c:1646  */
     { (yyval.value) = parser->GetStrIn((yyvsp[-2].strvalue),(yyvsp[0].strvalue)); }
-#line 1758 "parser.tab.c" /* yacc.c:1646  */
+#line 1766 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 51:
-#line 187 "parser.y" /* yacc.c:1646  */
+#line 195 "parser.y" /* yacc.c:1646  */
     { (yyval.value) = parser->GetStrIn((yyvsp[-2].sym),(yyvsp[0].strvalue)); }
-#line 1764 "parser.tab.c" /* yacc.c:1646  */
+#line 1772 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 52:
-#line 188 "parser.y" /* yacc.c:1646  */
+#line 196 "parser.y" /* yacc.c:1646  */
     { (yyval.value) = parser->GetStrIn((yyvsp[-2].strvalue),(yyvsp[0].sym)); }
-#line 1770 "parser.tab.c" /* yacc.c:1646  */
+#line 1778 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 53:
-#line 189 "parser.y" /* yacc.c:1646  */
+#line 197 "parser.y" /* yacc.c:1646  */
     { (yyval.value) = parser->GetStrIn((yyvsp[-2].sym),(yyvsp[0].sym)); }
-#line 1776 "parser.tab.c" /* yacc.c:1646  */
+#line 1784 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 54:
-#line 191 "parser.y" /* yacc.c:1646  */
+#line 199 "parser.y" /* yacc.c:1646  */
     { (yyval.value) = parser->GetNOTEQL((yyvsp[-2].strvalue),(yyvsp[0].strvalue)); }
-#line 1782 "parser.tab.c" /* yacc.c:1646  */
+#line 1790 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 55:
-#line 192 "parser.y" /* yacc.c:1646  */
+#line 200 "parser.y" /* yacc.c:1646  */
     { (yyval.value) = parser->GetNOTEQL((yyvsp[-2].sym),(yyvsp[0].strvalue)); }
-#line 1788 "parser.tab.c" /* yacc.c:1646  */
+#line 1796 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 56:
-#line 193 "parser.y" /* yacc.c:1646  */
+#line 201 "parser.y" /* yacc.c:1646  */
     { (yyval.value) = parser->GetNOTEQL((yyvsp[-2].strvalue),(yyvsp[0].sym)); }
-#line 1794 "parser.tab.c" /* yacc.c:1646  */
+#line 1802 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 57:
-#line 194 "parser.y" /* yacc.c:1646  */
+#line 202 "parser.y" /* yacc.c:1646  */
     { (yyval.value) = parser->GetNOTEQL((yyvsp[-2].sym),(yyvsp[0].sym)); }
-#line 1800 "parser.tab.c" /* yacc.c:1646  */
+#line 1808 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 58:
-#line 196 "parser.y" /* yacc.c:1646  */
+#line 204 "parser.y" /* yacc.c:1646  */
     { (yyval.value) = (yyvsp[-1].value); }
-#line 1806 "parser.tab.c" /* yacc.c:1646  */
+#line 1814 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 59:
-#line 197 "parser.y" /* yacc.c:1646  */
+#line 205 "parser.y" /* yacc.c:1646  */
     { (yyval.value) = -(yyvsp[0].value); }
-#line 1812 "parser.tab.c" /* yacc.c:1646  */
+#line 1820 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 60:
-#line 198 "parser.y" /* yacc.c:1646  */
+#line 206 "parser.y" /* yacc.c:1646  */
     { (yyval.value) = (yyvsp[0].value); }
-#line 1818 "parser.tab.c" /* yacc.c:1646  */
+#line 1826 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 61:
-#line 199 "parser.y" /* yacc.c:1646  */
+#line 207 "parser.y" /* yacc.c:1646  */
     { (yyval.value) = sin((yyvsp[-1].value)); }
-#line 1824 "parser.tab.c" /* yacc.c:1646  */
+#line 1832 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 62:
-#line 200 "parser.y" /* yacc.c:1646  */
+#line 208 "parser.y" /* yacc.c:1646  */
     { (yyval.value) = asin((yyvsp[-1].value)); }
-#line 1830 "parser.tab.c" /* yacc.c:1646  */
+#line 1838 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 63:
-#line 201 "parser.y" /* yacc.c:1646  */
+#line 209 "parser.y" /* yacc.c:1646  */
     { (yyval.value) = sqrt((yyvsp[-1].value)); }
-#line 1836 "parser.tab.c" /* yacc.c:1646  */
+#line 1844 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 64:
-#line 202 "parser.y" /* yacc.c:1646  */
+#line 210 "parser.y" /* yacc.c:1646  */
     { (yyval.value) = cos((yyvsp[-1].value)); }
-#line 1842 "parser.tab.c" /* yacc.c:1646  */
+#line 1850 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 65:
-#line 203 "parser.y" /* yacc.c:1646  */
+#line 211 "parser.y" /* yacc.c:1646  */
     { (yyval.value) = acos((yyvsp[-1].value)); }
-#line 1848 "parser.tab.c" /* yacc.c:1646  */
+#line 1856 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 66:
-#line 204 "parser.y" /* yacc.c:1646  */
+#line 212 "parser.y" /* yacc.c:1646  */
     { (yyval.value) = tan((yyvsp[-1].value)); }
-#line 1854 "parser.tab.c" /* yacc.c:1646  */
+#line 1862 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 67:
-#line 205 "parser.y" /* yacc.c:1646  */
+#line 213 "parser.y" /* yacc.c:1646  */
     { (yyval.value) = atan((yyvsp[-1].value)); }
-#line 1860 "parser.tab.c" /* yacc.c:1646  */
+#line 1868 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 68:
-#line 206 "parser.y" /* yacc.c:1646  */
+#line 214 "parser.y" /* yacc.c:1646  */
     { (yyval.value) = parser->exponent2((yyvsp[-3].value),(yyvsp[-1].value)); }
-#line 1866 "parser.tab.c" /* yacc.c:1646  */
+#line 1874 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 69:
-#line 207 "parser.y" /* yacc.c:1646  */
+#line 215 "parser.y" /* yacc.c:1646  */
     { (yyval.value) = exp((yyvsp[-1].value)); }
-#line 1872 "parser.tab.c" /* yacc.c:1646  */
+#line 1880 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 70:
-#line 208 "parser.y" /* yacc.c:1646  */
+#line 216 "parser.y" /* yacc.c:1646  */
     { (yyval.value) = log((yyvsp[-1].value)); }
-#line 1878 "parser.tab.c" /* yacc.c:1646  */
+#line 1886 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 71:
-#line 209 "parser.y" /* yacc.c:1646  */
+#line 217 "parser.y" /* yacc.c:1646  */
     { (yyval.value) = parser->GetMax((yyvsp[-1].listvalue)); }
-#line 1884 "parser.tab.c" /* yacc.c:1646  */
+#line 1892 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 72:
-#line 210 "parser.y" /* yacc.c:1646  */
+#line 218 "parser.y" /* yacc.c:1646  */
     { (yyval.value) = parser->GetMaxs((yyvsp[-3].address),(yyvsp[-1].value)); }
-#line 1890 "parser.tab.c" /* yacc.c:1646  */
+#line 1898 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 73:
-#line 211 "parser.y" /* yacc.c:1646  */
+#line 219 "parser.y" /* yacc.c:1646  */
     { (yyval.value) = parser->GetMin((yyvsp[-1].listvalue)); }
-#line 1896 "parser.tab.c" /* yacc.c:1646  */
+#line 1904 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 74:
-#line 212 "parser.y" /* yacc.c:1646  */
+#line 220 "parser.y" /* yacc.c:1646  */
     { (yyval.value) = parser->GetMean((yyvsp[-1].listvalue)); }
-#line 1902 "parser.tab.c" /* yacc.c:1646  */
+#line 1910 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 75:
-#line 215 "parser.y" /* yacc.c:1646  */
+#line 223 "parser.y" /* yacc.c:1646  */
     { (yyval.listvalue) = (yyvsp[0].listvalue); }
-#line 1908 "parser.tab.c" /* yacc.c:1646  */
+#line 1916 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 76:
-#line 216 "parser.y" /* yacc.c:1646  */
+#line 224 "parser.y" /* yacc.c:1646  */
     { (yyval.listvalue) = parser->assignlist((yyvsp[-2].sym),(yyvsp[0].listvalue)); }
-#line 1914 "parser.tab.c" /* yacc.c:1646  */
+#line 1922 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 77:
-#line 217 "parser.y" /* yacc.c:1646  */
+#line 225 "parser.y" /* yacc.c:1646  */
     { parser->setlistnull((yyvsp[-2].sym)); }
-#line 1920 "parser.tab.c" /* yacc.c:1646  */
+#line 1928 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 78:
-#line 218 "parser.y" /* yacc.c:1646  */
+#line 226 "parser.y" /* yacc.c:1646  */
     { (yyval.listvalue) = parser->GetLIDValue((yyvsp[0].sym)); }
-#line 1926 "parser.tab.c" /* yacc.c:1646  */
+#line 1934 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 79:
-#line 221 "parser.y" /* yacc.c:1646  */
+#line 229 "parser.y" /* yacc.c:1646  */
     { if(parser->worktype==0)(yyval.strvalue) = (yyvsp[0].strvalue); }
-#line 1932 "parser.tab.c" /* yacc.c:1646  */
+#line 1940 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 80:
-#line 222 "parser.y" /* yacc.c:1646  */
+#line 230 "parser.y" /* yacc.c:1646  */
     { if(parser->worktype==0)parser->setnull((yyvsp[-2].sym)); }
-#line 1938 "parser.tab.c" /* yacc.c:1646  */
+#line 1946 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 81:
-#line 223 "parser.y" /* yacc.c:1646  */
+#line 231 "parser.y" /* yacc.c:1646  */
     { if(parser->worktype==0)(yyval.strvalue) = parser->assignchar((yyvsp[-2].sym), (yyvsp[0].strvalue)); }
-#line 1944 "parser.tab.c" /* yacc.c:1646  */
+#line 1952 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 82:
-#line 224 "parser.y" /* yacc.c:1646  */
+#line 232 "parser.y" /* yacc.c:1646  */
     { if(parser->worktype==0)(yyval.strvalue) = parser->AddString((yyvsp[-2].strvalue),(yyvsp[0].strvalue));}
-#line 1950 "parser.tab.c" /* yacc.c:1646  */
+#line 1958 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 83:
-#line 225 "parser.y" /* yacc.c:1646  */
+#line 233 "parser.y" /* yacc.c:1646  */
     { if(parser->worktype==0)(yyval.strvalue) = parser->AddString((yyvsp[-2].sym),(yyvsp[0].strvalue));}
-#line 1956 "parser.tab.c" /* yacc.c:1646  */
+#line 1964 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 84:
-#line 226 "parser.y" /* yacc.c:1646  */
+#line 234 "parser.y" /* yacc.c:1646  */
     { if(parser->worktype==0)(yyval.strvalue) = parser->AddString((yyvsp[-2].strvalue),(yyvsp[0].sym));}
-#line 1962 "parser.tab.c" /* yacc.c:1646  */
+#line 1970 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 85:
-#line 227 "parser.y" /* yacc.c:1646  */
+#line 235 "parser.y" /* yacc.c:1646  */
     { if(parser->worktype==0)(yyval.strvalue) = parser->AddString((yyvsp[-2].sym),(yyvsp[0].sym));}
-#line 1968 "parser.tab.c" /* yacc.c:1646  */
+#line 1976 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 86:
-#line 228 "parser.y" /* yacc.c:1646  */
+#line 236 "parser.y" /* yacc.c:1646  */
     { if(parser->worktype==0)(yyval.strvalue) = parser->GetIDCharValue((yyvsp[0].sym)); }
-#line 1974 "parser.tab.c" /* yacc.c:1646  */
+#line 1982 "parser.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 1978 "parser.tab.c" /* yacc.c:1646  */
+#line 1986 "parser.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -2202,72 +2210,99 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 230 "parser.y" /* yacc.c:1906  */
+#line 238 "parser.y" /* yacc.c:1906  */
 
 
-void yyerror(const char *msg)
+	void yyerror(const char *msg)
 {
-	printf("Error Message:%s\n",msg);
+	printf("Error Message:%s\n", msg);
 }
 
-
-string ConvertToString(double value) 
+string ConvertToString(double value)
 {
 	stringstream ss;
 	ss << value;
 	return ss.str();
 }
 
-string ConvertListToString(LISTDOUBLE* lb)
+string ConvertListToString(LISTDOUBLE *lb)
 {
 	string s = "[";
-    for(auto it = lb->begin();it != lb->end();it++)
-    {
-        double d;
-        d = *it;
-        s += to_string(d);
-        if(it != lb->end()-1)
-            s += ",";
-    }
-    s += "]";
-    return s;
+	for (auto it = lb->begin(); it != lb->end(); it++)
+	{
+		double d;
+		d = *it;
+		s += to_string(d);
+		if (it != lb->end() - 1)
+			s += ",";
+	}
+	s += "]";
+	return s;
 }
 
-void updatePara(oriAllocator* oa, PARALIST* pl, int index)
+double genRandData(double low, double high)
+{
+	double value = 0;
+	value = low + static_cast<double>(rand()) / (static_cast<double>(RAND_MAX / (high - low)));
+	return value;
+}
+
+void updateData(oriAllocator *oa)
+{
+	unique_lock <mutex> lck(mtx);
+	double value = 0;
+	bool fflag = false;
+	while(1)
+	{
+		value = genRandData(0.8,1.5);
+		fflag = oa->appendFile(value);
+		if(fflag)
+		{
+			oa->loadFromDisk();
+			ready = true;
+			lck.unlock();
+			cv.notify_one();
+			return;
+		}
+	}
+
+}
+
+void updatePara(oriAllocator *oa, PARALIST *pl, int index)
 {
 	string pstring;
 	string value;
-	LISTDOUBLE* lv;
+	LISTDOUBLE *lv;
 	PARALIST::iterator pit;
-	for(pit = pl->begin();pit != pl->end();pit++)
+	for (pit = pl->begin(); pit != pl->end(); pit++)
 	{
 		lv = oa->GetMemData()->at(index);
 		(*pit)->SetListValue(lv);
 		value = ConvertListToString(lv);
-        pstring = (*pit)->GetName() + "=" + value+"\n";
-        scan_string(pstring.c_str());
-        cout<<"The info of para is : "<< pstring<<endl;
-        yyparse();
+		pstring = (*pit)->GetName() + "=" + value + "\n";
+		scan_string(pstring.c_str());
+		cout << "The info of para is : " << pstring << endl;
+		yyparse();
 	}
 }
 
-void updatePara1(PARALIST* pl, double dvalue)
+void updatePara1(PARALIST *pl, double dvalue)
 {
 	string pstring;
 	string value;
 	PARALIST::iterator pit;
-	for(pit = pl->begin();pit != pl->end();pit++)
+	for (pit = pl->begin(); pit != pl->end(); pit++)
 	{
 		(*pit)->SetValue(dvalue);
 		value = ConvertToString(dvalue);
-        pstring = (*pit)->GetName() + "=" + value+"\n";
-        scan_string(pstring.c_str());
-        cout<<"The info of para is : "<< pstring<<endl;
-        yyparse();
+		pstring = (*pit)->GetName() + "=" + value + "\n";
+		scan_string(pstring.c_str());
+		cout << "The info of para is : " << pstring << endl;
+		yyparse();
 	}
 }
 
-void initReasonwork(reason *re,calc::calc_parser *parser)
+void initReasonwork(reason *re, calc::calc_parser *parser)
 {
 	PARALIST *pl = re->GetParaList();
 	TOKENLIST *tl = re->GetTokenList();
@@ -2275,10 +2310,10 @@ void initReasonwork(reason *re,calc::calc_parser *parser)
 	TOKENLIST::iterator tit;
 	string value;
 	string pstring;
-		
+
 	string tstring;
-	double dvalue=0;
-	LISTDOUBLE* lvalue = new deque<double>();
+	double dvalue = 0;
+	LISTDOUBLE *lvalue = new deque<double>();
 	/*
 	for(pit = pl->begin();pit!=pl->end();pit++)
 	{
@@ -2290,10 +2325,10 @@ void initReasonwork(reason *re,calc::calc_parser *parser)
 	}
 	*/
 	lvalue->push_back(1);
-	for(pit = pl->begin();pit!=pl->end();pit++)
+	for (pit = pl->begin(); pit != pl->end(); pit++)
 	{
 		value = ConvertListToString(lvalue);
-		pstring = (*pit)->GetName() + "=" + value+"\n";
+		pstring = (*pit)->GetName() + "=" + value + "\n";
 		scan_string(pstring.c_str());
 		yyparse();
 	}
@@ -2310,316 +2345,326 @@ void initReasonwork(reason *re,calc::calc_parser *parser)
 
 void dataProduce(reason *re)
 {
-        PARALIST *pl = re->GetParaList();
-        PARALIST::iterator pit;
-        string value;
-        double dvalue=0;
-        string pstring;
-        for(pit= pl->begin();pit!=pl->end();pit++)
-        {
-                dvalue = (int)(((rand()%RAND_M+1)*1.0/(RAND_M+1)*100.0)*100.0)/100.0;
-                value = ConvertToString(dvalue);
-                pstring = (*pit)->GetName() + "=" + value+"\n";
-                scan_string(pstring.c_str());
-//                cout<<"The info of para is : "<< pstring<<endl;
-                yyparse();
-        }
+	PARALIST *pl = re->GetParaList();
+	PARALIST::iterator pit;
+	string value;
+	double dvalue = 0;
+	string pstring;
+	for (pit = pl->begin(); pit != pl->end(); pit++)
+	{
+		dvalue = (int)(((rand() % RAND_M + 1) * 1.0 / (RAND_M + 1) * 100.0) * 100.0) / 100.0;
+		value = ConvertToString(dvalue);
+		pstring = (*pit)->GetName() + "=" + value + "\n";
+		scan_string(pstring.c_str());
+		//                cout<<"The info of para is : "<< pstring<<endl;
+		yyparse();
+	}
 }
 
 //change
-void changeParaValue(reason *re,rule *tmpRule)
+void changeParaValue(reason *re, rule *tmpRule)
 {
-    double value;
+	double value;
 
-    string conStr=tmpRule->GetConsequent();
-    int index=conStr.find('=');
+	string conStr = tmpRule->GetConsequent();
+	int index = conStr.find('=');
 
-    string name=conStr.substr(0,index);
-    string sValue=conStr.substr(index+1);
-    value=atof(sValue.c_str());
+	string name = conStr.substr(0, index);
+	string sValue = conStr.substr(index + 1);
+	value = atof(sValue.c_str());
 
-//独立规则没有后件参数??
-//    PARALIST *CPList=(tmpRule)->GetConParaList();
-//    PARALIST::iterator prit;
-//    for(prit = CPList->begin();prit!=CPList->end();prit++)
-//    {
-//        (*prit)->SetValue(value);
-//        cout<<"(改变的参数:"<<(*prit)->GetName()<<":"<<(*prit)->GetValue()<<")"<<endl;
-//    }
+	//独立规则没有后件参数??
+	//    PARALIST *CPList=(tmpRule)->GetConParaList();
+	//    PARALIST::iterator prit;
+	//    for(prit = CPList->begin();prit!=CPList->end();prit++)
+	//    {
+	//        (*prit)->SetValue(value);
+	//        cout<<"(改变的参数:"<<(*prit)->GetName()<<":"<<(*prit)->GetValue()<<")"<<endl;
+	//    }
 
-    //遍历所有参数 找到该参数再改变
-    PARALIST *pl = re->GetParaList();
-    PARALIST::iterator pit;
-    for(pit= pl->begin();pit!=pl->end();pit++)
-    {
+	//遍历所有参数 找到该参数再改变
+	PARALIST *pl = re->GetParaList();
+	PARALIST::iterator pit;
+	for (pit = pl->begin(); pit != pl->end(); pit++)
+	{
 
-        if( (*pit)->GetName()==name )
-        {
-            (*pit)->SetValue(value);
-            cout<<"(改变的参数:"<<(*pit)->GetName()<<":"<<(*pit)->GetValue()<<")"<<endl;
-        }
-
-    }
+		if ((*pit)->GetName() == name)
+		{
+			(*pit)->SetValue(value);
+			cout << "(改变的参数:" << (*pit)->GetName() << ":" << (*pit)->GetValue() << ")" << endl;
+		}
+	}
 }
 //change
 
-void testReason(reason* re, calc::calc_parser* parser)
+void testReason(reason *re, calc::calc_parser *parser)
 {
 	RULELIST *rlist = re->GetRuleList();
 	RULELIST::iterator rit;
 
 	string rstring;
 
-	for(rit = rlist->begin();rit!=rlist->end();rit++)
+	for (rit = rlist->begin(); rit != rlist->end(); rit++)
 	{
-		rstring = (*rit)->GetAntecedent()+"\n";
-		cout<<"rstring: "<<rstring<<endl;
+		rstring = (*rit)->GetAntecedent() + "\n";
+		cout << "rstring: " << rstring << endl;
 		scan_string(rstring.c_str());
 		yyparse();
-		cout<<"parser result: "<<parser->GetResult()<<endl;
+		cout << "parser result: " << parser->GetResult() << endl;
 	}
-
 }
 
-void reasonRules(reason *re,calc::calc_parser* parser)
+void reasonRules(reason *re, calc::calc_parser *parser)
 {
 	TOKENLIST *tl = re->GetTokenList();
 	RULELIST *rlist = re->GetRuleList();
 	TOKENLIST::iterator tit;
 	RULELIST::iterator rit;
-    PARALIST *ptmplist = NULL;
-    PARALIST::iterator ptmpit;
+	PARALIST *ptmplist = NULL;
+	PARALIST::iterator ptmpit;
 	string value;
 
 	string rstring;
 	string tstring;
-	
-	for(rit = rlist->begin();rit!=rlist->end();rit++)
+
+	for (rit = rlist->begin(); rit != rlist->end(); rit++)
 	{
-		rstring = (*rit)->GetAntecedent()+"\n";
-		cout<<"rstring: "<<rstring<<endl;
+		rstring = (*rit)->GetAntecedent() + "\n";
+		cout << "rstring: " << rstring << endl;
 		scan_string(rstring.c_str());
-		cout<<"scan success"<<endl;
+		cout << "scan success" << endl;
 		yyparse();
-		cout<<"parser success"<<endl;
-		if(parser->GetResult()==1)
-        {
-            cout<<"Trigger rule: "<<(*rit)->GetRuleName()<<"---"<<(*rit)->GetAntecedent()<<" THEN "<<(*rit)->GetConsequent()<<endl;
-        }
+		cout << "parser success" << endl;
+		if (parser->GetResult() == 1)
+		{
+			cout << "Trigger rule: " << (*rit)->GetRuleName() << "---" << (*rit)->GetAntecedent() << " THEN " << (*rit)->GetConsequent() << endl;
+		}
 	}
-	cout<<"reasonRule complete."<<endl;
+	cout << "reasonRule complete." << endl;
 }
 
-void reasonIndeRules(reason *re,calc::calc_parser *parser)
+void reasonOnce(reason *re, calc::calc_parser *parser, oriAllocator *oa, PARALIST *pl)
+{
+	unique_lock <mutex> lck(mtx);
+	cv.wait(lck, [] { return ready; });
+	for (int i = 0; i < oa->GetInferRound(); i++)
+	{
+		updatePara(oa, pl, i);
+
+		RULELIST *rlist = re->GetRuleList();
+		RULELIST::iterator rit;
+		string rstring;
+		for (rit = rlist->begin(); rit != rlist->end(); rit++)
+		{
+			rstring = (*rit)->GetAntecedent() + "\n";
+			cout << "rstring: " << rstring << endl;
+			scan_string(rstring.c_str());
+			cout << "scan success" << endl;
+			yyparse();
+			cout << "parser success" << endl;
+			if (parser->GetResult() == 1)
+			{
+				cout << "Trigger rule: " << (*rit)->GetRuleName() << "---" << (*rit)->GetAntecedent() << " THEN " << (*rit)->GetConsequent() << endl;
+			}
+		}
+	}
+	processed = true;
+	lck.unlock();
+	cv.notify_one();
+}
+
+void reasonIndeRules(reason *re, calc::calc_parser *parser)
 {
 
 	TOKENLIST *tl = re->GetTokenList();
 	RULELIST *inderlist = re->GetIndeRules();
 	TOKENLIST::iterator tit;
 	RULELIST::iterator rit;
-        PARALIST *ptmplist = NULL;
-        PARALIST::iterator ptmpit;
+	PARALIST *ptmplist = NULL;
+	PARALIST::iterator ptmpit;
 	string value;
 
-		
 	string rstring;
 	string tstring;
-			
-	for(tit = tl->begin();tit!=tl->end();tit++)
+
+	for (tit = tl->begin(); tit != tl->end(); tit++)
 	{
-		tstring = (*tit)->GetTokenName() + "=" + (*tit)->GetTokenContent()+"\n";
+		tstring = (*tit)->GetTokenName() + "=" + (*tit)->GetTokenContent() + "\n";
 		scan_string(tstring.c_str());
 		yyparse();
 	}
 
-	for(rit = inderlist->begin();rit!=inderlist->end();rit++)
+	for (rit = inderlist->begin(); rit != inderlist->end(); rit++)
 	{
-		rstring = (*rit)->GetReplacedRule()+"\n";
+		rstring = (*rit)->GetReplacedRule() + "\n";
 		scan_string(rstring.c_str());
 		yyparse();
-		if(parser->GetResult()==1)
-                {
-                    //cout<<"Trigger indepedent rule: "<<(*rit)->GetRuleName()<<"---"<<(*rit)->GetAntecedent()<<endl;
-                    cout<<"触发独立规则: "<<(*rit)->GetRuleName()<<"---"<<(*rit)->GetAntecedent()<<" THEN "<<(*rit)->GetConsequent()<<endl;
+		if (parser->GetResult() == 1)
+		{
+			//cout<<"Trigger indepedent rule: "<<(*rit)->GetRuleName()<<"---"<<(*rit)->GetAntecedent()<<endl;
+			cout << "触发独立规则: " << (*rit)->GetRuleName() << "---" << (*rit)->GetAntecedent() << " THEN " << (*rit)->GetConsequent() << endl;
 
-                    //change
-                    //rule *tmpRule=*rit;
-                    changeParaValue(re,*rit);
-                    //change
-
-                }
-		
+			//change
+			//rule *tmpRule=*rit;
+			changeParaValue(re, *rit);
+			//change
+		}
 	}
-
-
-			
 }
 
-
-void reasonNestedRules(reason *re,calc::calc_parser *parser)
+void reasonNestedRules(reason *re, calc::calc_parser *parser)
 {
 	NESTEDRULELIST *nrlist = re->GetNestedRules();
 	TOKENLIST *tl = re->GetTokenList();
-	
+
 	RULELIST::iterator nrit;
-		
+
 	PARALIST *ptmplist = NULL;
-	
+
 	PARALIST::iterator ptmpit;
 	TOKENLIST *ttmplist;
 	TOKENLIST::iterator ttmpit;
-	TOKENLIST::iterator tit;	
+	TOKENLIST::iterator tit;
 	NESTEDRULELIST::iterator neit;
-			
-	
-	
+
 	string tstring;
 	string ntstring;
 	string constring;
 	string ptokenstring;
-	
-	
-	
-	
-	for(tit = tl->begin();tit!=tl->end();tit++)
+
+	for (tit = tl->begin(); tit != tl->end(); tit++)
 	{
-		tstring = (*tit)->GetTokenName() + "=" + (*tit)->GetTokenContent()+"\n";
+		tstring = (*tit)->GetTokenName() + "=" + (*tit)->GetTokenContent() + "\n";
 		scan_string(tstring.c_str());
 		yyparse();
 	}
 
-	for (neit=nrlist->begin();neit!=nrlist->end();neit++)
-        {
-            for (nrit = (*neit)->begin();nrit!=(*neit)->end();nrit++)
-            {
-                ntstring = (*nrit)->GetReplacedRule()+"\n";
-                //cout<<ntstring<<endl;
-                scan_string(ntstring.c_str());
-                yyparse();
-                if(parser->GetResult()==1)
-                {
-                    //cout<<"Trigger nested rule: "<<(*nrit)->GetRuleName()<<"---"<<(*nrit)->GetAntecedent()<<endl;
-                    cout<<"触发嵌套规则: "<<(*nrit)->GetRuleName()<<"---"<<(*nrit)->GetAntecedent()<<endl;
+	for (neit = nrlist->begin(); neit != nrlist->end(); neit++)
+	{
+		for (nrit = (*neit)->begin(); nrit != (*neit)->end(); nrit++)
+		{
+			ntstring = (*nrit)->GetReplacedRule() + "\n";
+			//cout<<ntstring<<endl;
+			scan_string(ntstring.c_str());
+			yyparse();
+			if (parser->GetResult() == 1)
+			{
+				//cout<<"Trigger nested rule: "<<(*nrit)->GetRuleName()<<"---"<<(*nrit)->GetAntecedent()<<endl;
+				cout << "触发嵌套规则: " << (*nrit)->GetRuleName() << "---" << (*nrit)->GetAntecedent() << endl;
 
-                    //change
-                    changeParaValue(re,*nrit);
-                    //change
+				//change
+				changeParaValue(re, *nrit);
+				//change
 
-                    constring = (*nrit)->GetConsequent()+"\n";
-                    //cout<<constring<<endl;
-                    //cout<<parser->GetResult()<<endl;
-                    scan_string(constring.c_str());
-                    yyparse();
-                    //cout<<parser->GetResult()<<endl;
+				constring = (*nrit)->GetConsequent() + "\n";
+				//cout<<constring<<endl;
+				//cout<<parser->GetResult()<<endl;
+				scan_string(constring.c_str());
+				yyparse();
+				//cout<<parser->GetResult()<<endl;
 
+				ptmplist = (*nrit)->GetConParaList();
+				for (ptmpit = ptmplist->begin(); ptmpit != ptmplist->end(); ptmpit++)
+				{
 
-                    ptmplist = (*nrit)->GetConParaList();
-                    for(ptmpit=ptmplist->begin();ptmpit!=ptmplist->end();ptmpit++)
-                    {
-
-                        ttmplist = (*ptmpit)->QuotedTokenList;
-                        for(ttmpit=ttmplist->begin();ttmpit!=ttmplist->end();ttmpit++)
-                        {
-                            //cout<<"No!!!!"<<endl;
-                            ptokenstring = (*ttmpit)->GetTokenName() + "="+(*ttmpit)->GetTokenContent()+"\n";
-                            scan_string(ptokenstring.c_str());
-                            yyparse();
-                        }
-                    }
-                    cout<<endl;
-
-                }
-
-            }
-
-	}	
+					ttmplist = (*ptmpit)->QuotedTokenList;
+					for (ttmpit = ttmplist->begin(); ttmpit != ttmplist->end(); ttmpit++)
+					{
+						//cout<<"No!!!!"<<endl;
+						ptokenstring = (*ttmpit)->GetTokenName() + "=" + (*ttmpit)->GetTokenContent() + "\n";
+						scan_string(ptokenstring.c_str());
+						yyparse();
+					}
+				}
+				cout << endl;
+			}
+		}
+	}
 }
 
-int main(int argc,char *argv[])
+int main(int argc, char *argv[])
 {
-    int n = -1;
+	int n = -1;
 
-    parser= new calc::calc_parser();
+	parser = new calc::calc_parser();
 
-    if (parser->create(0)!=1) {
-        printf("Create calc_parser failed!\n");
-    }
-	
-	array<int,6> opTable{0,0,0,0,0,0};
+	if (parser->create(0) != 1)
+	{
+		printf("Create calc_parser failed!\n");
+	}
 
-    if(argc == 1)
-    {
-        cout<<"现在用随机产生的数据进行规则推理:"<<"(每隔三秒推理一次)"<<endl<<endl<<endl;
-        sleep(3);
+	array<int, 6> opTable{0, 0, 0, 0, 0, 0};
 
-        reason *re = new reason();
-        re->InitReasonNetwork();
+	if (argc == 1)
+	{
+		cout << "现在用随机产生的数据进行规则推理:"
+			 << "(每隔三秒推理一次)" << endl
+			 << endl
+			 << endl;
+		sleep(3);
 
-        srand((unsigned)time(NULL));
-        initReasonwork(re,parser);
+		reason *re = new reason();
+		re->InitReasonNetwork();
+
+		srand((unsigned)time(NULL));
+		initReasonwork(re, parser);
+
+		while (1)
+		{
+			cout << "************" << endl;
+			dataProduce(re);
+			reasonIndeRules(re, parser);
+			reasonNestedRules(re, parser);
+
+			cout << "************" << endl
+				 << endl
+				 << endl;
+
+			sleep(3);
+		}
+		delete re;
+	}
+	if (argc == 2)
+	{
+
+		// ifstream fin(argv[1]);
+		// if(!fin)
+		// {
+		//     printf("no file data!\n");
+		//     exit(1);
+		// }
+
+		//else
+		//{
+		//cout<<"现在从该文档中读入数据"<<endl;
+		//sleep(1);
+
+		int curIndex = 0;
+		double value = 0;
+		bool mflag = false;
+		bool dflag = false;
+		bool rflag = false;
 
 
-        while(1)
-        {
-            cout<<"************"<<endl;
-            dataProduce(re);
-            reasonIndeRules(re,parser);
-            reasonNestedRules(re,parser);
+		reason *re = new reason();
+		re->InitReasonNetwork();
+		initReasonwork(re, parser);
+		oriAllocator *oa = new oriAllocator();
+		optimize *opt = new optimize();
+		opt->setOpTable(re);
+		opt->testOp();
+		srand((unsigned)time(NULL));
 
-
-
-
-            cout<<"************"<<endl<<endl<<endl;
-
-            sleep(3);
-        }
-        delete re;
-    }
-    if(argc == 2 )
-    {
-
-        // ifstream fin(argv[1]);
-        // if(!fin)
-        // {
-        //     printf("no file data!\n");
-        //     exit(1);
-        // }
-
-
-        //else
-        //{
-            //cout<<"现在从该文档中读入数据"<<endl;
-            //sleep(1);
-
-			int curIndex = 0;
-			double value = 0;
-			bool mflag = false;
-			bool dflag = false;
-			bool rflag = false;
-
-			double lo = 0.8;
-			double hi = 1.5;
-
-			srand((unsigned)time(NULL));
-
-            reason *re = new reason();
-            re->InitReasonNetwork();
-            initReasonwork(re,parser);
-			oriAllocator* oa = new oriAllocator();
-			optimize* opt = new optimize();
-			opt->setOpTable(re);
-			opt->testOp();
-
-            PARALIST *pl = re->GetParaList();
-			/*
+		PARALIST *pl = re->GetParaList();
+		/*
             PARALIST::iterator pit;
             string value;
             double dvalue=0;
             string pstring;
 			*/
 
-            //ifstream fin("data.txt");
-			/*
+		//ifstream fin("data.txt");
+		/*
             for(pit= pl->begin();pit!=pl->end();pit++)
             {
                     fin>> dvalue;
@@ -2636,70 +2681,94 @@ int main(int argc,char *argv[])
             }
 			*/
 
-			while(1)
+		// while (1)
+		// {
+		// 	value = genRandData(0.8,1.5);
+		// 	cout << "value: " << value << endl;
+		// 	if (mflag)
+		// 	{
+		// 		// for(int index = 0;index < oa->GetInferRound();index++){
+		// 		// 	updatePara(oa,pl,curIndex);
+		// 		// 	reasonRules(re,parser);
+		// 		// 	if(index == oa->GetInferRound()-1)
+		// 		// 		rflag = true;
+		// 		// }
+		// 		if (curIndex == oa->GetInferRound())
+		// 		{
+		// 			curIndex = 0;
+		// 			rflag = true;
+		// 		}
+		// 		if (curIndex < oa->GetInferRound())
+		// 		{
+		// 			updatePara(oa, pl, curIndex);
+		// 			cout << "reason Rule: " << curIndex << endl;
+		// 			reasonRules(re, parser);
+		// 			curIndex++;
+		// 		}
+		// 		if (dflag && rflag)
+		// 		{
+		// 			cout << "loadFromDisk1" << endl;
+		// 			oa->loadFromDisk();
+		// 			cout << "loadFromDisk2" << endl;
+		// 			dflag = false;
+		// 			rflag = false;
+		// 		}
+		// 		// else{
+		// 		// 	cout<<"appendfile1"<<endl;
+		// 		// 	dflag = oa->appendFile(value);
+		// 		// 	cout<<"appendfile2"<<endl;
+		// 		// }
+		// 	}
+		// 	else
+		// 	{
+		// 		mflag = oa->genMemData(value);
+		// 	}
+		// }
+
+		while(1)
+		{
+			value = genRandData(0.8,1.5);
+			mflag = oa->genMemData(value);
+			if(mflag)
+				break;
+		}
+		//reasonOnce(re,parser,oa,pl);
+		while(1){
+			thread treason(reasonOnce,re,parser,oa,pl);
+			updateData(oa);
 			{
-				value = lo + static_cast<double>(rand())/(static_cast<double>(RAND_MAX/(hi-lo)));
-				cout<<"value: "<<value<<endl;
-				if(mflag){
-					// for(int index = 0;index < oa->GetInferRound();index++){
-					// 	updatePara(oa,pl,curIndex);
-					// 	reasonRules(re,parser);
-					// 	if(index == oa->GetInferRound()-1)
-					// 		rflag = true;
-					// }
-					if(curIndex == oa->GetInferRound()){
-						curIndex = 0;
-						rflag = true;
-					}
-					if(curIndex < oa->GetInferRound()){
-						updatePara(oa,pl,curIndex);
-						cout<<"reason Rule: "<<curIndex<<endl;
-						reasonRules(re,parser);
-						curIndex++;
-					}
-					if(dflag && rflag){
-						cout<<"loadFromDisk1"<<endl;
-						oa->loadFromDisk();
-						cout<<"loadFromDisk2"<<endl;
-						dflag = false;
-						rflag = false;
-					}else{
-						cout<<"appendfile1"<<endl;
-						dflag = oa->appendFile(value);
-						cout<<"appendfile2"<<endl;
-					}
-				}else{
-					mflag = oa->genMemData(value);
-				}
+				unique_lock <mutex> lck(mtx);
+				cv.wait(lck, [] { return processed; });
 			}
+			treason.join();
+		}
 
-			// while(1)
-			// {
-			// 	value = lo + static_cast<double>(rand())/(static_cast<double>(RAND_MAX/(hi-lo)));
-			// 	cout<<"value: "<<value<<endl;
-			// 	if(mflag){
-			// 		break;
-			// 	}else{
-			// 			mflag = oa->genMemData(value);
-			// 		}
-			// }
-			// for(int i = 0;i<oa->GetMemData()->size();i++){
-			// 	updatePara(oa,pl,curIndex);
-			// 	//reasonRules(re,parser);
-			// 	testReason(re,parser);
-			// 	sleep(3);
-			// }
-		
 
-            delete re;
-        //}
-    }
-	
-	
-    delete parser;
-    return n;
+		// while(1)
+		// {
+		// 	value = lo + static_cast<double>(rand())/(static_cast<double>(RAND_MAX/(hi-lo)));
+		// 	cout<<"value: "<<value<<endl;
+		// 	if(mflag){
+		// 		break;
+		// 	}else{
+		// 			mflag = oa->genMemData(value);
+		// 		}
+		// }
+		// for(int i = 0;i<oa->GetMemData()->size();i++){
+		// 	updatePara(oa,pl,curIndex);
+		// 	//reasonRules(re,parser);
+		// 	testReason(re,parser);
+		// 	sleep(3);
+		// }
 
-/*
+		delete re;
+		//}
+	}
+
+	delete parser;
+	return n;
+
+	/*
     int n = -1;
     parser= new calc::calc_parser();
 
@@ -2746,4 +2815,3 @@ int main(int argc,char *argv[])
 	return n;
 */
 }
-
