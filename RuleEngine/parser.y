@@ -25,6 +25,7 @@ values in expressions.
 #include <unistd.h>
 #include <vector>
 #include <array>
+#include <thread>
 #include "reason.h"
 #include "calc.h"
 #include "optimize.h"
@@ -688,7 +689,9 @@ int main(int argc,char *argv[])
 						dflag = false;
 						rflag = false;
 					}else{
+						cout<<"appendfile1"<<endl;
 						dflag = oa->appendFile(value);
+						cout<<"appendfile2"<<endl;
 					}
 				}else{
 					mflag = oa->genMemData(value);

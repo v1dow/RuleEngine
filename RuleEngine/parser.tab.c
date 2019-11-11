@@ -1489,7 +1489,7 @@ yyreduce:
     {
         case 4:
 #line 127 "parser.y" /* yacc.c:1646  */
-    {  parser->m_result = (double)(yyvsp[-1].value); printf("get result."); }
+    {  parser->m_result = (double)(yyvsp[-1].value); }
 #line 1494 "parser.tab.c" /* yacc.c:1646  */
     break;
 
@@ -1645,7 +1645,7 @@ yyreduce:
 
   case 32:
 #line 164 "parser.y" /* yacc.c:1646  */
-    { (yyval.value)= parser->GetIDValue((yyvsp[0].sym)); printf("ID success."); }
+    { (yyval.value)= parser->GetIDValue((yyvsp[0].sym)); }
 #line 1650 "parser.tab.c" /* yacc.c:1646  */
     break;
 
@@ -1699,7 +1699,7 @@ yyreduce:
 
   case 41:
 #line 174 "parser.y" /* yacc.c:1646  */
-    { (yyval.value) = parser->GetLESS((yyvsp[-2].value),(yyvsp[0].value)); printf("< success."); }
+    { (yyval.value) = parser->GetLESS((yyvsp[-2].value),(yyvsp[0].value)); }
 #line 1704 "parser.tab.c" /* yacc.c:1646  */
     break;
 
@@ -1879,7 +1879,7 @@ yyreduce:
 
   case 71:
 #line 209 "parser.y" /* yacc.c:1646  */
-    { (yyval.value) = parser->GetMax((yyvsp[-1].listvalue)); printf("Max value is: %f",(double)parser->GetMax((yyvsp[-1].listvalue))); }
+    { (yyval.value) = parser->GetMax((yyvsp[-1].listvalue)); }
 #line 1884 "parser.tab.c" /* yacc.c:1646  */
     break;
 
@@ -1891,7 +1891,7 @@ yyreduce:
 
   case 73:
 #line 211 "parser.y" /* yacc.c:1646  */
-    { (yyval.value) = parser->GetMin((yyvsp[-1].listvalue)); printf("min success."); }
+    { (yyval.value) = parser->GetMin((yyvsp[-1].listvalue)); }
 #line 1896 "parser.tab.c" /* yacc.c:1646  */
     break;
 
@@ -1909,7 +1909,7 @@ yyreduce:
 
   case 76:
 #line 216 "parser.y" /* yacc.c:1646  */
-    { (yyval.listvalue) = parser->assignlist((yyvsp[-2].sym),(yyvsp[0].listvalue)); printf("list assign."); }
+    { (yyval.listvalue) = parser->assignlist((yyvsp[-2].sym),(yyvsp[0].listvalue)); }
 #line 1914 "parser.tab.c" /* yacc.c:1646  */
     break;
 
@@ -1921,7 +1921,7 @@ yyreduce:
 
   case 78:
 #line 218 "parser.y" /* yacc.c:1646  */
-    { (yyval.listvalue) = parser->GetLIDValue((yyvsp[0].sym)); printf("LID success."); }
+    { (yyval.listvalue) = parser->GetLIDValue((yyvsp[0].sym)); }
 #line 1926 "parser.tab.c" /* yacc.c:1646  */
     break;
 
@@ -2363,6 +2363,24 @@ void changeParaValue(reason *re,rule *tmpRule)
 }
 //change
 
+void testReason(reason* re, calc::calc_parser* parser)
+{
+	RULELIST *rlist = re->GetRuleList();
+	RULELIST::iterator rit;
+
+	string rstring;
+
+	for(rit = rlist->begin();rit!=rlist->end();rit++)
+	{
+		rstring = (*rit)->GetAntecedent()+"\n";
+		cout<<"rstring: "<<rstring<<endl;
+		scan_string(rstring.c_str());
+		yyparse();
+		cout<<"parser result: "<<parser->GetResult()<<endl;
+	}
+
+}
+
 void reasonRules(reason *re,calc::calc_parser* parser)
 {
 	TOKENLIST *tl = re->GetTokenList();
@@ -2618,7 +2636,6 @@ int main(int argc,char *argv[])
             }
 			*/
 
-			/*
 			while(1)
 			{
 				value = lo + static_cast<double>(rand())/(static_cast<double>(RAND_MAX/(hi-lo)));
@@ -2652,28 +2669,26 @@ int main(int argc,char *argv[])
 						cout<<"appendfile2"<<endl;
 					}
 				}else{
-					cout<<"genMemData1"<<endl;
 					mflag = oa->genMemData(value);
-					cout<<"genMemData2"<<endl;
 				}
 			}
-			*/
 
-			while(1)
-			{
-				value = lo + static_cast<double>(rand())/(static_cast<double>(RAND_MAX/(hi-lo)));
-				cout<<"value: "<<value<<endl;
-				if(mflag){
-					break;
-				}else{
-						mflag = oa->genMemData(value);
-					}
-			}
-			for(int i = 0;i<oa->GetMemData()->size();i++){
-				updatePara(oa,pl,curIndex);
-				reasonRules(re,parser);
-				sleep(3);
-			}
+			// while(1)
+			// {
+			// 	value = lo + static_cast<double>(rand())/(static_cast<double>(RAND_MAX/(hi-lo)));
+			// 	cout<<"value: "<<value<<endl;
+			// 	if(mflag){
+			// 		break;
+			// 	}else{
+			// 			mflag = oa->genMemData(value);
+			// 		}
+			// }
+			// for(int i = 0;i<oa->GetMemData()->size();i++){
+			// 	updatePara(oa,pl,curIndex);
+			// 	//reasonRules(re,parser);
+			// 	testReason(re,parser);
+			// 	sleep(3);
+			// }
 		
 
             delete re;
