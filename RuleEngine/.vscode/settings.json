@@ -1,6 +1,8 @@
 {
     "files.associations": {
         "*.y": "cpp",
-        "deque": "cpp"
+        "deque": "cpp",
+        "iostream": "cpp",
+        "string": "cpp"
     }
 }
