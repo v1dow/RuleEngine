@@ -44,9 +44,13 @@ int statOp::GetLength()
 {
 	return this->length;
 }
-intermediate* statOp::CreateMid(const string name)
+intermediate* statOp::CreateMid(const string opname,const string intername, const int index)
 {
-	intermediate* med = new intermediate(name);
+	string oldstring = opname + "(" + intername + ")";
+	string newstring = opname + to_string(index);
+	intermediate* med = new intermediate(intername);
+	med->SetOldStr(oldstring);
+	med->SetNewStr(newstring);
 	mList->push_back(med);
 	return med;
 }

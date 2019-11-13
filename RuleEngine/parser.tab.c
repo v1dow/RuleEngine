@@ -2725,6 +2725,7 @@ int main(int argc, char *argv[])
 		// 	}
 		// }
 
+/*
 		while(1)
 		{
 			value = genRandData(0.8,1.5);
@@ -2742,6 +2743,7 @@ int main(int argc, char *argv[])
 			}
 			treason.join();
 		}
+*/
 
 
 		// while(1)

@@ -110,3 +110,8 @@ void rule::SetContent(string Ant,string Con)
 	this->Antecedent = Ant;
 	this->Consequent = Con;
 }
+
+void rule::SetAntecedent(string s)
+{
+	this->Antecedent = s;
+}

@@ -4,12 +4,16 @@ intermediate::intermediate()
 {
 	intermediateString = "Defalt String";
 	intermediateValue = 0;
+	oldStr = "Default OldStr";
+	newStr = "Default NewStr";
 }
 
 intermediate::intermediate(const string name)
 {
 	intermediateString = name;
 	intermediateValue = 0;
+	oldStr = "Default OldStr";
+	newStr = "Default NewStr";
 }
 
 intermediate::~intermediate()
@@ -36,4 +40,24 @@ double intermediate::GetValue()
 {
 	return this->intermediateValue;
 }
+
+void intermediate::SetOldStr(string s)
+{
+	this->oldStr = s;
+}
+string intermediate::GetOldStr()
+{
+	return this->oldStr;
+}
+
+void intermediate::SetNewStr(string s)
+{
+	this->newStr = s;
+}
+
+string intermediate::GetNewStr()
+{
+	return this->newStr;
+}
+
 

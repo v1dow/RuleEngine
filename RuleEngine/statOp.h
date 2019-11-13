@@ -29,7 +29,7 @@ public:
 	void SetMidList(MIDLIST* list);
 	MIDLIST* GetMidList();
 	int GetLength();
-	intermediate* CreateMid(const string name);
+	intermediate* CreateMid(const string opname, const string intername, const int index);
 };
 
 #endif

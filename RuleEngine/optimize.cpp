@@ -105,6 +105,7 @@ statOp* optimize::CreateOp(reason* re,const string name)
 	RULELIST::iterator rit;
 	string rstring;
 	string medstring;
+	int index = 0;
 
 	for(rit = rList->begin();rit != rList->end();rit++)
 	{
@@ -132,7 +133,10 @@ statOp* optimize::CreateOp(reason* re,const string name)
         	medstring = rstring.substr(first,last-first);
         	medstring = medString(medstring);
 			if(isExist(op,medstring)!=-1)
-				op->CreateMid(medstring);
+			{
+				op->CreateMid(name,medstring,index);
+				index += 1;
+			}
         	if(last==rstring.length()-1)
             	break;
         	rstring = rstring.substr(last);

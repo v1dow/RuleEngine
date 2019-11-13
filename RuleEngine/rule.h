@@ -109,6 +109,7 @@ class rule
                 void SetRuleName(string rn);
 		string  GetAntecedent();
 		string  GetConsequent();
+		void SetAntecedent(string s);
 		void SetContent(string Ant,string Con);
 };
 #endif

@@ -9,6 +9,8 @@ class intermediate
 {
 	string intermediateString;
 	double intermediateValue;
+	string oldStr;
+	string newStr;
 	
 public:
 	intermediate();
@@ -19,6 +21,10 @@ public:
 	string GetString();
 	void SetValue(double value);
 	double GetValue();
+	void SetOldStr(string s);
+	void setNewStr(string s);
+	string GetOldStr();
+	string GetNewStr();
 };
 
 
