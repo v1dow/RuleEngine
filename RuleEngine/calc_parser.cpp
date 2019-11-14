@@ -78,7 +78,7 @@ LISTDOUBLE* calc_parser::assignlist(symbol* id, LISTDOUBLE* ld)
 	id->m_bHasbeenInit = true;
 	delete id->m_lvalue;
 	id->m_lvalue = new deque<double>(*ld);
-	cout<<"assignlist, id name: "<<id->m_name<<endl;
+	//cout<<"assignlist, id name: "<<id->m_name<<endl;
 	//delete ld;
 	return id->m_lvalue;
 }
@@ -127,7 +127,7 @@ LISTDOUBLE* calc_parser::GetLIDValue(symbol* id)
 	assert(id != NULL);
 	if(!id->m_bHasbeenInit)
 		m_iWrong=2;	
-	cout<<"GetLIDValue, id name:"<<id->m_name<<endl;
+	//cout<<"GetLIDValue, id name:"<<id->m_name<<endl;
 	if(id->m_lvalue == NULL)
 		cout<<"nullpointer."<<endl;
 	return id->m_lvalue;

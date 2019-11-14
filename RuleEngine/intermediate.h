@@ -22,7 +22,7 @@ public:
 	void SetValue(double value);
 	double GetValue();
 	void SetOldStr(string s);
-	void setNewStr(string s);
+	void SetNewStr(string s);
 	string GetOldStr();
 	string GetNewStr();
 };

@@ -296,6 +296,7 @@ void updatePara(optimize* opt, oriAllocator *oa, PARALIST *pl, int index)
 {
 	string pstring;
 	string value;
+	string oldstring;
 	LISTDOUBLE *lv;
 	PARALIST::iterator pit;
 	OPLIST* opList = opt->GetOpList();
@@ -303,13 +304,44 @@ void updatePara(optimize* opt, oriAllocator *oa, PARALIST *pl, int index)
 	/* original para assign */
 	for (pit = pl->begin(); pit != pl->end(); pit++)
 	{
-		lv = oa->GetMemData()->at(index);
-		(*pit)->SetListValue(lv);
-		value = ConvertListToString(lv);
-		pstring = (*pit)->GetName() + "=" + value + "\n";
-		scan_string(pstring.c_str());
-		cout << "The info of original para is : " << pstring << endl;
-		yyparse();
+		for(auto opit = opList->begin();opit != opList->end();opit++)
+		{
+			MIDLIST* mList = (*opit)->GetMidList();
+			for(auto mit = mList->begin();mit!=mList->end();mit++)
+			{
+				if((*pit)->GetName() != (*mit)->GetNewStr())
+				{
+					lv = oa->GetMemData()->at(index);
+					(*pit)->SetListValue(lv);
+					value = ConvertListToString(lv);
+					pstring = (*pit)->GetName() + "=" + value + "\n";
+					scan_string(pstring.c_str());
+					cout << "The info of original para is : " << pstring << endl;
+					yyparse();
+				}
+			}
+		}
+	}
+
+	/* intermediate para value set */
+	for (pit = pl->begin(); pit != pl->end(); pit++)
+	{
+		for(auto opit = opList->begin();opit != opList->end();opit++)
+		{
+			MIDLIST* mList = (*opit)->GetMidList();
+			for(auto mit = mList->begin();mit!=mList->end();mit++)
+			{
+				if((*pit)->GetName() == (*mit)->GetNewStr())
+				{
+					oldstring = (*mit)->GetOldStr() + "\n";
+					scan_string(oldstring.c_str());
+					cout << "The info of intermediate para is : " << (*mit)->GetOldStr() << endl;
+					yyparse();
+					//cout<< "intermediate result: "<<parser->GetResult()<<endl;
+					(*pit)->SetValue(parser->GetResult());
+				}
+			}
+		}
 	}
 
 	/* intermediate para assign */
@@ -318,19 +350,20 @@ void updatePara(optimize* opt, oriAllocator *oa, PARALIST *pl, int index)
 		for(auto opit = opList->begin();opit != opList->end();opit++)
 		{
 			MIDLIST* mList = (*opit)->GetMidList();
-			for(mit = mList->begin();mit!=mList->end();mit++)
+			for(auto mit = mList->begin();mit!=mList->end();mit++)
 			{
 				if((*pit)->GetName() == (*mit)->GetNewStr())
 				{
-					scan_string(((*mit)->GetOldStr()).c_str());
-					cout << "The info of intermediate para is : " << pstring << endl;
+					value = ConvertToString((*pit)->GetValue());
+					pstring = (*mit)->GetNewStr() + "=" + value + "\n";
+					scan_string(pstring.c_str());
+					cout << "The info of original para is : " << pstring << endl;
 					yyparse();
-					(*pit)->SetValue(parser->GetResult());
 				}
 			}
 		}
 	}
-
+	
 }
 
 void updatePara1(PARALIST *pl, double dvalue)
@@ -399,7 +432,7 @@ void reshapeRulePara(reason *re, calc::calc_parser *parser, optimize* opt)
 	string rulestring;
 	string oldstring;
 	string newstring;
-	string newrulestring
+	string newrulestring;
 	size_t ifind;
 
 	/* ********************************
@@ -408,7 +441,7 @@ void reshapeRulePara(reason *re, calc::calc_parser *parser, optimize* opt)
 	for(auto opit = opList->begin();opit != opList->end();opit++)
 	{
 		MIDLIST* mList = (*opit)->GetMidList();
-		for(mit = mList->begin();mit!=mList->end();mit++)
+		for(auto mit = mList->begin();mit!=mList->end();mit++)
 		{
 			replacedPara = (*mit)->GetNewStr();
 			re->CreateParas(replacedPara,"NULL");
@@ -424,7 +457,7 @@ void reshapeRulePara(reason *re, calc::calc_parser *parser, optimize* opt)
 		for(auto opit = opList->begin();opit != opList->end();opit++)
 		{
 			MIDLIST* mList = (*opit)->GetMidList();
-			for(mit = mList->begin();mit!=mList->end();mit++)
+			for(auto mit = mList->begin();mit!=mList->end();mit++)
 			{
 				oldstring = (*mit)->GetOldStr();
 				newstring = (*mit)->GetNewStr();
@@ -556,7 +589,7 @@ void reasonOnce(optimize* opt, reason *re, calc::calc_parser *parser, oriAllocat
 		for (rit = rlist->begin(); rit != rlist->end(); rit++)
 		{
 			rstring = (*rit)->GetAntecedent() + "\n";
-			cout << "rstring: " << rstring << endl;
+			//cout << "rstring: " << rstring << endl;
 			scan_string(rstring.c_str());
 			yyparse();
 			if (parser->GetResult() == 1)

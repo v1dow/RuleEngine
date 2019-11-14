@@ -161,3 +161,7 @@ void optimize::testOp()
 	}
 }
 
+OPLIST* optimize::GetOpList()
+{
+	return this->opList;
+}

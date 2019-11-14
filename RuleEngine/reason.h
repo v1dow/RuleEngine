@@ -42,13 +42,13 @@ public:
 	int testIndeRList();
 	int testNestedRuleList();
 	int testToken();
+	para* CreateParas(const string &pname,const string &ptype);
 private:
 	int LoadParaFromFile();
 	int LoadRuleFromFile();
 	int LoadTokenFromFile();
 
 	rule* CreateRules(const string &rn,const string &ant,const string &con);
-	para* CreateParas(const string &pname,const string &ptype);
 	token* CreateTokens(const string &t);
 	token* CreateTokens(const string &tname,const string &tcon);
 	int maprListToMap();
