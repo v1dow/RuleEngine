@@ -282,7 +282,7 @@ void updateData(oriAllocator *oa)
 		fflag = oa->appendFile(value);
 		if(fflag)
 		{
-			oa->loadFromDisk();
+			//oa->loadFromDisk();
 			ready = true;
 			lck.unlock();
 			cv.notify_one();
@@ -579,6 +579,7 @@ void reasonOnce(optimize* opt, reason *re, calc::calc_parser *parser, oriAllocat
 {
 	unique_lock <mutex> lck(mtx);
 	cv.wait(lck, [] { return ready; });
+	oa->loadFromDisk();
 	for (int i = 0; i < oa->GetInferRound(); i++)
 	{
 		updatePara(opt, oa, pl, i);
@@ -867,10 +868,12 @@ int main(int argc, char *argv[])
 		while(1){
 			thread treason(reasonOnce,opt,re,parser,oa,pl);
 			updateData(oa);
+			/*
 			{
 				unique_lock <mutex> lck(mtx);
 				cv.wait(lck, [] { return processed; });
 			}
+			*/
 			treason.join();
 		}
 
