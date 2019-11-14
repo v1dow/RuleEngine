@@ -292,12 +292,15 @@ void updateData(oriAllocator *oa)
 
 }
 
-void updatePara(oriAllocator *oa, PARALIST *pl, int index)
+void updatePara(optimize* opt, oriAllocator *oa, PARALIST *pl, int index)
 {
 	string pstring;
 	string value;
 	LISTDOUBLE *lv;
 	PARALIST::iterator pit;
+	OPLIST* opList = opt->GetOpList();
+
+	/* original para assign */
 	for (pit = pl->begin(); pit != pl->end(); pit++)
 	{
 		lv = oa->GetMemData()->at(index);
@@ -305,9 +308,29 @@ void updatePara(oriAllocator *oa, PARALIST *pl, int index)
 		value = ConvertListToString(lv);
 		pstring = (*pit)->GetName() + "=" + value + "\n";
 		scan_string(pstring.c_str());
-		cout << "The info of para is : " << pstring << endl;
+		cout << "The info of original para is : " << pstring << endl;
 		yyparse();
 	}
+
+	/* intermediate para assign */
+	for (pit = pl->begin(); pit != pl->end(); pit++)
+	{
+		for(auto opit = opList->begin();opit != opList->end();opit++)
+		{
+			MIDLIST* mList = (*opit)->GetMidList();
+			for(mit = mList->begin();mit!=mList->end();mit++)
+			{
+				if((*pit)->GetName() == (*mit)->GetNewStr())
+				{
+					scan_string(((*mit)->GetOldStr()).c_str());
+					cout << "The info of intermediate para is : " << pstring << endl;
+					yyparse();
+					(*pit)->SetValue(parser->GetResult());
+				}
+			}
+		}
+	}
+
 }
 
 void updatePara1(PARALIST *pl, double dvalue)
@@ -365,6 +388,58 @@ void initReasonwork(reason *re, calc::calc_parser *parser)
 	}
 	*/
 	delete lvalue;
+}
+
+void reshapeRulePara(reason *re, calc::calc_parser *parser, optimize* opt)
+{
+	OPLIST* opList = opt->GetOpList();
+	RULELIST* rList = re->GetRuleList();
+
+	string replacedPara;
+	string rulestring;
+	string oldstring;
+	string newstring;
+	string newrulestring
+	size_t ifind;
+
+	/* ********************************
+	* add new paras for specific ops. *
+	******************************** */  
+	for(auto opit = opList->begin();opit != opList->end();opit++)
+	{
+		MIDLIST* mList = (*opit)->GetMidList();
+		for(mit = mList->begin();mit!=mList->end();mit++)
+		{
+			replacedPara = (*mit)->GetNewStr();
+			re->CreateParas(replacedPara,"NULL");
+		}
+	}
+
+	/* ***************
+	* reshape rules. *
+	**************** */ 
+	for(auto rit = rList->begin();rit != rList->end();rit++)
+	{
+		rulestring = (*rit)->GetAntecedent();
+		for(auto opit = opList->begin();opit != opList->end();opit++)
+		{
+			MIDLIST* mList = (*opit)->GetMidList();
+			for(mit = mList->begin();mit!=mList->end();mit++)
+			{
+				oldstring = (*mit)->GetOldStr();
+				newstring = (*mit)->GetNewStr();
+
+				ifind = rulestring.find(oldstring);
+				while(ifind>0 && ifind != string::npos)
+    			{
+        			newrulestring = rulestring.replace(ifind,oldstring.length(),newstring);
+        			ifind = rulestring.find(oldstring,ifind + 1);
+    			}
+				if(!newrulestring.empty())
+					(*rit)->SetAntecedent(newrulestring);
+			}
+		}
+	}
 }
 
 void dataProduce(reason *re)
@@ -467,13 +542,13 @@ void reasonRules(reason *re, calc::calc_parser *parser)
 	cout << "reasonRule complete." << endl;
 }
 
-void reasonOnce(reason *re, calc::calc_parser *parser, oriAllocator *oa, PARALIST *pl)
+void reasonOnce(optimize* opt, reason *re, calc::calc_parser *parser, oriAllocator *oa, PARALIST *pl)
 {
 	unique_lock <mutex> lck(mtx);
 	cv.wait(lck, [] { return ready; });
 	for (int i = 0; i < oa->GetInferRound(); i++)
 	{
-		updatePara(oa, pl, i);
+		updatePara(opt, oa, pl, i);
 
 		RULELIST *rlist = re->GetRuleList();
 		RULELIST::iterator rit;
@@ -483,9 +558,7 @@ void reasonOnce(reason *re, calc::calc_parser *parser, oriAllocator *oa, PARALIS
 			rstring = (*rit)->GetAntecedent() + "\n";
 			cout << "rstring: " << rstring << endl;
 			scan_string(rstring.c_str());
-			cout << "scan success" << endl;
 			yyparse();
-			cout << "parser success" << endl;
 			if (parser->GetResult() == 1)
 			{
 				cout << "Trigger rule: " << (*rit)->GetRuleName() << "---" << (*rit)->GetAntecedent() << " THEN " << (*rit)->GetConsequent() << endl;
@@ -676,6 +749,7 @@ int main(int argc, char *argv[])
 		oriAllocator *oa = new oriAllocator();
 		optimize *opt = new optimize();
 		opt->setOpTable(re);
+		reshapeRulePara(re, parser, opt);
 		opt->testOp();
 		srand((unsigned)time(NULL));
 
@@ -749,7 +823,6 @@ int main(int argc, char *argv[])
 		// 	}
 		// }
 
-/*
 		while(1)
 		{
 			value = genRandData(0.8,1.5);
@@ -759,7 +832,7 @@ int main(int argc, char *argv[])
 		}
 		//reasonOnce(re,parser,oa,pl);
 		while(1){
-			thread treason(reasonOnce,re,parser,oa,pl);
+			thread treason(reasonOnce,opt,re,parser,oa,pl);
 			updateData(oa);
 			{
 				unique_lock <mutex> lck(mtx);
@@ -767,7 +840,6 @@ int main(int argc, char *argv[])
 			}
 			treason.join();
 		}
-*/
 
 
 		// while(1)
