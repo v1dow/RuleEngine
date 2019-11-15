@@ -1,0 +1,2 @@
+R1:IF p1>1.4 THEN p1=1 
+R2:IF p1<1.4 THEN p1=0
