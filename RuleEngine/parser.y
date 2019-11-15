@@ -40,6 +40,7 @@ mutex mtx;
 condition_variable cv;
 bool ready = false;
 bool processed = false;
+bool fileReady = false;
 
 enum StatOpNo
 {
@@ -271,25 +272,19 @@ double genRandData(double low, double high)
 	return value;
 }
 
-void updateData(oriAllocator *oa)
+void updateData(double value, oriAllocator* oa)
 {
-	unique_lock <mutex> lck(mtx);
-	double value = 0;
+	//unique_lock <mutex> lck(mtx);
 	bool fflag = false;
-	while(1)
+	fflag = oa->appendFile(value);
+	if(fflag)
 	{
-		value = genRandData(0.8,1.5);
-		fflag = oa->appendFile(value);
-		if(fflag)
-		{
-			//oa->loadFromDisk();
-			ready = true;
-			lck.unlock();
-			cv.notify_one();
-			return;
-		}
+		//oa->loadFromDisk();
+		ready = true;
+		//fileReady = true;
+		//lck.unlock();
+		//cv.notify_one();
 	}
-
 }
 
 void updatePara(optimize* opt, oriAllocator *oa, PARALIST *pl, int index)
@@ -577,9 +572,11 @@ void reasonRules(reason *re, calc::calc_parser *parser)
 
 void reasonOnce(optimize* opt, reason *re, calc::calc_parser *parser, oriAllocator *oa, PARALIST *pl)
 {
-	unique_lock <mutex> lck(mtx);
-	cv.wait(lck, [] { return ready; });
+	//unique_lock <mutex> lck(mtx);
+	//cv.wait(lck, [] { return ready; });
 	oa->loadFromDisk();
+	//fileReady = false;
+	ready = false;
 	for (int i = 0; i < oa->GetInferRound(); i++)
 	{
 		updatePara(opt, oa, pl, i);
@@ -599,9 +596,9 @@ void reasonOnce(optimize* opt, reason *re, calc::calc_parser *parser, oriAllocat
 			}
 		}
 	}
-	processed = true;
-	lck.unlock();
-	cv.notify_one();
+	//processed = true;
+	//lck.unlock();
+	//cv.notify_one();
 }
 
 void reasonIndeRules(reason *re, calc::calc_parser *parser)
@@ -866,15 +863,24 @@ int main(int argc, char *argv[])
 		}
 		//reasonOnce(re,parser,oa,pl);
 		while(1){
-			thread treason(reasonOnce,opt,re,parser,oa,pl);
-			updateData(oa);
+			//thread treason(reasonOnce,opt,re,parser,oa,pl);
+			//updateData(oa);
 			/*
 			{
 				unique_lock <mutex> lck(mtx);
 				cv.wait(lck, [] { return processed; });
 			}
 			*/
-			treason.join();
+			//treason.join();
+			value = genRandData(0.7,1.5);
+
+			if(ready)
+				reasonOnce(opt,re,parser,oa,pl);
+			else
+			{
+				thread tupdateData(updateData,value,oa);
+				tupdateData.join();				
+			}
 		}
 
 
