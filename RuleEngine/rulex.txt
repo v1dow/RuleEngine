@@ -1,2 +1,2 @@
-R1:IF MAX(#p1)>1.4 THEN p1=[0.8,1.2] 
-R2:IF MAX(#p1)<1.4 THEN p1=[0.9]
+R1:IF p1>1.4 THEN p1=1 
+R2:IF p1<1.4 THEN p1=0

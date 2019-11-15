@@ -35,12 +35,14 @@ int main(int argc, char *argv[])
 		{
 			cout << "************" << endl;
 			dataProduce(re);
-			reasonIndeRules(re, parser);
-			reasonNestedRules(re, parser);
+			//reasonIndeRules(re, parser);
+			//reasonNestedRules(re, parser);
+			reasonRules(re,parser);
 
 			cout << "************" << endl
 				 << endl
 				 << endl;
+
 
 			sleep(3);
 		}
@@ -84,7 +86,7 @@ int main(int argc, char *argv[])
             string value;
             double dvalue=0;
             string pstring;
-			*/
+		*/
 
 		//ifstream fin("data.txt");
 		/*
@@ -147,16 +149,16 @@ int main(int argc, char *argv[])
 		// 		mflag = oa->genMemData(value);
 		// 	}
 		// }
-
-		while(1)
-		{
-			value = genRandData(0.8,1.5);
-			mflag = oa->genMemData(value);
-			if(mflag)
-				break;
-		}
+		
+//		while(1)
+//		{
+//			value = genRandData(0.8,1.5);
+//			mflag = oa->genMemData(value);
+//			if(mflag)
+//				break;
+//		}
 		//reasonOnce(re,parser,oa,pl);
-		while(1){
+//		while(1){
 			//thread treason(reasonOnce,opt,re,parser,oa,pl);
 			//updateData(oa);
 			/*
@@ -166,16 +168,16 @@ int main(int argc, char *argv[])
 			}
 			*/
 			//treason.join();
-			value = genRandData(0.7,1.5);
-
-			if(ready)
-				reasonOnce(opt,re,parser,oa,pl);
-			else
-			{
-				thread tupdateData(updateData,value,oa);
-				tupdateData.join();				
-			}
-		}
+//			value = genRandData(0.7,1.5);
+//
+//			if(ready)
+//				reasonOnce(opt,re,parser,oa,pl);
+//			else
+//			{
+//				thread tupdateData(updateData,value,oa);
+//				tupdateData.join();				
+//			}
+//		}
 
 
 		// while(1)
@@ -196,6 +198,8 @@ int main(int argc, char *argv[])
 		// }
 
 		delete re;
+		delete oa;
+		delete opt;
 		//}
 	}
 

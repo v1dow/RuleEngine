@@ -36,10 +36,10 @@ values in expressions.
 using namespace calc;
 calc::calc_parser *parser;
 
+/*
 mutex mtx;
 condition_variable cv;
 bool ready = false;
-bool processed = false;
 bool fileReady = false;
 
 enum StatOpNo
@@ -51,6 +51,7 @@ enum StatOpNo
     opVAR,
     opSTD
 };
+*/
 
 extern "C"
 {

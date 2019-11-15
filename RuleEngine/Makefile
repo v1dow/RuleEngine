@@ -2,8 +2,11 @@ LEX=flex
 YACC=bison
 CC=g++
 all:libRuleEngine.so
-libRuleEngine.so: oriAllocator.o intermediate.o statOp.o optimize.o calc.o calc_parser.o lex.yy.o parser.tab.o reason.o rule.o para.o token.o tinystr.o tinyxmlparser.o tinyxml.o tinyxmlerror.o
-	g++ -fPIC -shared -o libRuleEngine.so oriAllocator.o intermediate.o statOp.o optimize.o calc.o calc_parser.o lex.yy.o parser.tab.o symbol.o reason.o rule.o para.o token.o tinystr.o tinyxmlparser.o tinyxml.o tinyxmlerror.o -lpthread
+libRuleEngine.so: func.o oriAllocator.o intermediate.o statOp.o optimize.o calc.o calc_parser.o lex.yy.o parser.tab.o reason.o rule.o para.o token.o tinystr.o tinyxmlparser.o tinyxml.o tinyxmlerror.o
+	g++ -fPIC -shared -o libRuleEngine.so func.o oriAllocator.o intermediate.o statOp.o optimize.o calc.o calc_parser.o lex.yy.o parser.tab.o symbol.o reason.o rule.o para.o token.o tinystr.o tinyxmlparser.o tinyxml.o tinyxmlerror.o -lpthread
+
+func.o: func.cpp
+	g++ -fPIC -c func.cpp
 
 oriAllocator.o: oriAllocator.cpp
 	g++ -fPIC -c oriAllocator.cpp
@@ -29,10 +32,10 @@ lex.yy.c:lexer.l
 parser.tab.c parser.tab.h:parser.y
 	bison -d parser.y
 
-lex.o: lex.yy.c parser.tab.c
+lex.yy.o: lex.yy.c parser.tab.c
 	g++ -fPIC -c lex.yy.c parser.tab.c
 
-parser.o: parser.tab.c
+parser.tab.o: parser.tab.c
 	g++ -fPIC -c parser.tab.c
 
 symbol.o:symbol.cpp

@@ -20,6 +20,7 @@
 #include "reason.h"
 #include "calc.h"
 #include "optimize.h"
+#include "parser.tab.h"
 #include "oriAllocator.h"
 
 #define RAND_M 32767
