@@ -5,6 +5,7 @@
 #include <deque>
 #include <iostream>
 #include <fstream>
+#include "sqliteFunc.h"
 
 using namespace std;
 
