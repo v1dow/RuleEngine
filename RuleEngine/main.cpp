@@ -69,6 +69,19 @@ int main(int argc, char *argv[])
 		bool dflag = false;
 		bool rflag = false;
 
+		sqlite3* db = NULL;
+		const string tName = "vibration";
+		int rc;
+		rc = sqlite3_open("test.db",&db);
+		if(rc)
+		{
+			fprintf(stderr,"Can't open database:%s\n",sqlite3_errmsg(db));
+			sqlite3_close(db);
+			exit(1);
+		}
+		else
+			printf("open database successfully.");
+
 
 		reason *re = new reason();
 		re->InitReasonNetwork();
@@ -150,15 +163,15 @@ int main(int argc, char *argv[])
 		// 	}
 		// }
 		
-//		while(1)
-//		{
-//			value = genRandData(0.8,1.5);
-//			mflag = oa->genMemData(value);
-//			if(mflag)
-//				break;
-//		}
+		while(1)
+		{
+			value = genRandData(0.8,1.5);
+			mflag = oa->genMemData(value);
+			if(mflag)
+				break;
+		}
 		//reasonOnce(re,parser,oa,pl);
-//		while(1){
+		while(1){
 			//thread treason(reasonOnce,opt,re,parser,oa,pl);
 			//updateData(oa);
 			/*
@@ -168,16 +181,18 @@ int main(int argc, char *argv[])
 			}
 			*/
 			//treason.join();
-//			value = genRandData(0.7,1.5);
-//
-//			if(ready)
-//				reasonOnce(opt,re,parser,oa,pl);
-//			else
-//			{
-//				thread tupdateData(updateData,value,oa);
-//				tupdateData.join();				
-//			}
-//		}
+			value = genRandData(0.7,1.5);
+
+			if(ready)
+				//reasonOnce(opt,re,parser,oa,pl);
+				reasonOnceSQL(opt,re,parser,oa,pl,db,tName);
+			else
+			{
+				//thread tupdateData(updateData,value,oa);
+				thread tupdateData(updateDataSQL,to_string(value),oa,db,tName);
+				tupdateData.join();				
+			}
+		}
 
 
 		// while(1)

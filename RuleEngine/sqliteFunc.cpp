@@ -39,6 +39,7 @@ char** selData(sqlite3* db, const string& tName, const string& limit, const stri
 		cout<<"data fetch fail."<<endl;
 	}
 	/* test result*/
+	/*
 	else{
 		printf("row = %d, column = %d\n", row, column);
 		printf(result[0]);
@@ -49,6 +50,7 @@ char** selData(sqlite3* db, const string& tName, const string& limit, const stri
 			}
 		}
 	}
+	*/
 	return result;
 }
 

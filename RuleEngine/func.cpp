@@ -57,6 +57,22 @@ void updateData(double value, oriAllocator* oa)
 	}
 }
 
+void updateDataSQL(const string& value, oriAllocator* oa, sqlite3* db, const string& tName)
+{
+	//unique_lock <mutex> lck(mtx);
+	bool fflag = false;
+	//fflag = oa->appendFile(value);
+	fflag = oa->appendSQL(db,tName,value);
+	if(fflag)
+	{
+		//oa->loadFromDisk();
+		ready = true;
+		//fileReady = true;
+		//lck.unlock();
+		//cv.notify_one();
+	}
+}
+
 void updatePara(optimize* opt, oriAllocator *oa, PARALIST *pl, int index)
 {
 	string pstring;
@@ -344,7 +360,43 @@ void reasonOnce(optimize* opt, reason *re, calc::calc_parser *parser, oriAllocat
 {
 	//unique_lock <mutex> lck(mtx);
 	//cv.wait(lck, [] { return ready; });
+	
 	oa->loadFromDisk();
+	
+	//fileReady = false;
+	ready = false;
+	for (int i = 0; i < oa->GetInferRound(); i++)
+	{
+		updatePara(opt, oa, pl, i);
+
+		RULELIST *rlist = re->GetRuleList();
+		RULELIST::iterator rit;
+		string rstring;
+		for (rit = rlist->begin(); rit != rlist->end(); rit++)
+		{
+			rstring = (*rit)->GetAntecedent() + "\n";
+			//cout << "rstring: " << rstring << endl;
+			scan_string(rstring.c_str());
+			yyparse();
+			if (parser->GetResult() == 1)
+			{
+				cout << "Trigger rule: " << (*rit)->GetRuleName() << "---" << (*rit)->GetAntecedent() << " THEN " << (*rit)->GetConsequent() << endl;
+			}
+		}
+	}
+	//processed = true;
+	//lck.unlock();
+	//cv.notify_one();
+}
+
+void reasonOnceSQL(optimize* opt, reason *re, calc::calc_parser *parser, oriAllocator *oa, PARALIST *pl, sqlite3* db, const string& tName)
+{
+	//unique_lock <mutex> lck(mtx);
+	//cv.wait(lck, [] { return ready; });
+	
+	//oa->loadFromDisk();
+	oa->loadFromSQL(db,tName);
+	
 	//fileReady = false;
 	ready = false;
 	for (int i = 0; i < oa->GetInferRound(); i++)

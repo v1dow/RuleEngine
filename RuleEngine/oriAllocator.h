@@ -18,6 +18,7 @@ class oriAllocator
     int lengthCounter;
     int roundCounter;
     int fileCounter;
+    int SQLCounter;
     deque<deque<double>* >* memData;
     int isReady;
 
@@ -29,8 +30,10 @@ public:
     int isready();
 
     void loadFromDisk();
+    void loadFromSQL(sqlite3* db, const string& tName);
     bool genMemData(double value);
     bool appendFile(double value);
+    bool appendSQL(sqlite3* db, const string& tName, const string& value);
     void upgradeDisk();
     void testMemData();
     void testFile();

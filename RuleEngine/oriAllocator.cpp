@@ -9,6 +9,7 @@ oriAllocator::oriAllocator()
     lengthCounter = 0;
     roundCounter = 0;
     fileCounter = 0;
+    SQLCounter = 0;
     isReady = 0;
     memData = new deque<deque<double> *>();
     for (int i = 0; i < inferRound; i++)
@@ -87,6 +88,21 @@ bool oriAllocator::appendFile(double value)
     return false;
 }
 
+/* append sqlite3 table 
+** db: sqlite3 database opend 
+** tName: table name that prepare to append to 
+** value: data want to append */
+bool oriAllocator::appendSQL(sqlite3* db, const string& tName, const string& value)
+{
+    if(SQLCounter == roundLength * inferRound)
+    {
+        SQLCounter = 0;
+        return true;
+    }
+    addData(db,tName,value);
+    return false;
+}
+
 void oriAllocator::loadFromDisk()
 {
     double value;
@@ -121,6 +137,32 @@ void oriAllocator::loadFromDisk()
     ofstream fout("test.txt");
     fout.close();
     fin.close();
+}
+
+/* load memData from sqlite3 table 
+** row represents how many data item in the table
+** there row is roundLength * inferRound 
+** column represents how many attributes in the table 
+** there is 2, id and data respectively
+** and we ignore the data item of id so we mutiply by column 
+** db: sqlite3 database opend 
+** tName: table name that prepare to append to */
+void oriAllocator::loadFromSQL(sqlite3* db, const string& tName)
+{
+    double value = 0;
+    lengthCounter = 0;
+    roundCounter = 0;
+    int row = roundLength * inferRound;
+    int column = 2;
+    char** result = selData(db,tName,to_string(roundLength * inferRound),"0");
+    for(int i = 1;i <= row;i++)
+    {
+        value = atof(result[i*column + 1]);
+        genMemData(value);
+    }
+    // when sqlite3_get_table, don't forget sqlite3_free_table
+    sqlite3_free_table(result);
+    clrData(db,tName);
 }
 
 void oriAllocator::testMemData()
