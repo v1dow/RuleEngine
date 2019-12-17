@@ -2,10 +2,8 @@
 
 oriAllocator::oriAllocator()
 {
-    samplingRate = 0.1;
-    inferPeriod = 1;
-    roundLength = inferPeriod / samplingRate;
-    inferRound = 5;
+    roundLength = 100;
+    inferRound = 10;
     lengthCounter = 0;
     roundCounter = 0;
     fileCounter = 0;
@@ -16,13 +14,11 @@ oriAllocator::oriAllocator()
         memData->push_back(new deque<double>(roundLength, 0));
 }
 
-oriAllocator::oriAllocator(const double samplingRate_, const double inferPeriod_)
+oriAllocator::oriAllocator(const double roundLength_, const int inferRound_)
 {
-    samplingRate = samplingRate_;
-    inferPeriod = inferPeriod_;
-    roundLength = inferPeriod / samplingRate;
+    roundLength = roundLength_;
+    inferRound = inferRound_;
     //inferRound = 100 * 1024 * 1024 / (8 * roundLength);
-	inferRound = 40; 
     lengthCounter = 0;
     roundCounter = 0;
 	fileCounter = 0;
@@ -53,6 +49,7 @@ bool oriAllocator::genMemData(double value)
     if (roundCounter == inferRound)
     {
         roundCounter = 0;
+        lengthCounter = 0;
         return true;
     }
     if (roundCounter < inferRound)

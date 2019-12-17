@@ -11,8 +11,6 @@ using namespace std;
 
 class oriAllocator
 {
-    double samplingRate;
-    double inferPeriod;
     double roundLength;
     int inferRound;
     int lengthCounter;
@@ -24,7 +22,7 @@ class oriAllocator
 
 public:
     oriAllocator();
-    oriAllocator(const double samplingRate_,const double inferPeriod_);
+    oriAllocator(const double roundLength_,const int inferRound_);
     ~oriAllocator();
 
     int isready();

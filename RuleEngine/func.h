@@ -70,6 +70,8 @@ void testReason(reason *re, calc::calc_parser *parser);
 
 void reasonRules(reason *re, calc::calc_parser *parser);
 
+void reasonRulesList(reason *re, calc::calc_parser *parser, oriAllocator *oa, PARALIST *pl);
+
 void reasonOnce(reason *re, calc::calc_parser *parser, oriAllocator *oa, PARALIST *pl);
 
 void reasonOnceOPT(optimize* opt, reason *re, calc::calc_parser *parser, oriAllocator *oa, PARALIST *pl);

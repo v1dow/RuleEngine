@@ -378,6 +378,29 @@ void reasonRules(reason *re, calc::calc_parser *parser)
 	cout << "reasonRule complete." << endl;
 }
 
+void reasonRulesList(reason *re, calc::calc_parser *parser, oriAllocator *oa, PARALIST *pl)
+{
+	for (int i = 0; i < oa->GetInferRound(); i++)
+	{
+		updatePara(oa, pl, i);
+
+		RULELIST *rlist = re->GetRuleList();
+		RULELIST::iterator rit;
+		string rstring;
+		for (rit = rlist->begin(); rit != rlist->end(); rit++)
+		{
+			rstring = (*rit)->GetAntecedent() + "\n";
+			//cout << "rstring: " << rstring << endl;
+			scan_string(rstring.c_str());
+			yyparse();
+			if (parser->GetResult() == 1)
+			{
+				cout << "Trigger rule: " << (*rit)->GetRuleName() << "---" << (*rit)->GetAntecedent() << " THEN " << (*rit)->GetConsequent() << endl;
+			}
+		}
+	}
+}
+
 void reasonOnce(reason *re, calc::calc_parser *parser, oriAllocator *oa, PARALIST *pl)
 {
 	//unique_lock <mutex> lck(mtx);

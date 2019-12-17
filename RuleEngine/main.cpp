@@ -87,7 +87,7 @@ int main(int argc, char *argv[])
 		reason *re = new reason();
 		re->InitReasonNetwork();
 		initReasonwork(re, parser);
-		oriAllocator *oa = new oriAllocator(0.01,1);
+		// oriAllocator *oa = new oriAllocator(0.01,1);
 		//optimize *opt = new optimize();
 		//opt->setOpTable(re);
 		//reshapeRulePara(re, parser, opt);
@@ -163,45 +163,71 @@ int main(int argc, char *argv[])
 		// 		mflag = oa->genMemData(value);
 		// 	}
 		// }
-		while(1)
+		// while(1)
+		// {
+		// 	value = genRandData(0.7,1.5);
+		// 	mflag = oa->genMemData(value);
+		// 	if(mflag)
+		// 		break;
+		// }
+		// //reasonOnce(re,parser,oa,pl);
+		auto start1 = chrono::high_resolution_clock::now();
+		// for(int i=0;i<oa->GetRoundLength()*oa->GetInferRound()*100;i++){
+		// 	//thread treason(reasonOnce,opt,re,parser,oa,pl);
+		// 	//updateData(oa);
+		// 	/*
+		// 	{
+		// 		unique_lock <mutex> lck(mtx);
+		// 		cv.wait(lck, [] { return processed; });
+		// 	}
+		// 	*/
+		// 	//treason.join();
+		// 	value = genRandData(0.7,1.5);
+
+		// 	if(ready)
+		// 		//reasonOnce(re,parser,oa,pl);
+		// 		//reasonOnceOPT(opt,re,parser,oa,pl);
+		// 		//reasonOnceOPTSQL(opt,re,parser,oa,pl,db,tName);
+		// 		reasonOnceSQL(re,parser,oa,pl,db,tName);
+		// 	else
+		// 	{
+		// 		//thread tupdateData(updateData,value,oa);
+		// 		thread tupdateData(updateDataSQL,to_string(value),oa,db,tName);
+		// 		//cout<<"start updateDataSQL()"<<endl;
+		// 		//updateDataSQL(to_string(value),oa,db,tName);
+		// 		tupdateData.join();				
+		// 	}
+		// }
+		oriAllocator *oa1 = new oriAllocator(50,1);
+		for(int i=0;i<oa1->GetRoundLength()*1000;i++)
 		{
 			value = genRandData(0.7,1.5);
-			mflag = oa->genMemData(value);
+			mflag = oa1->genMemData(value);
 			if(mflag)
-				break;
-		}
-		//reasonOnce(re,parser,oa,pl);
-		auto start = chrono::high_resolution_clock::now();
-		for(int i=0;i<oa->GetRoundLength()*oa->GetInferRound()*100;i++){
-			//thread treason(reasonOnce,opt,re,parser,oa,pl);
-			//updateData(oa);
-			/*
 			{
-				unique_lock <mutex> lck(mtx);
-				cv.wait(lck, [] { return processed; });
+				reasonRulesList(re,parser,oa1,pl);
+				mflag = false;
 			}
-			*/
-			//treason.join();
+		}
+		auto finish1 = chrono::high_resolution_clock::now();
+		chrono::duration<double> elapsed1 = finish1 - start1;
+
+		auto start2 = chrono::high_resolution_clock::now();
+		oriAllocator *oa2 = new oriAllocator(50,10);
+		for(int i=0;i<oa2->GetRoundLength()*1000;i++)
+		{
 			value = genRandData(0.7,1.5);
-
-			if(ready)
-				//reasonOnce(re,parser,oa,pl);
-				//reasonOnceOPT(opt,re,parser,oa,pl);
-				//reasonOnceOPTSQL(opt,re,parser,oa,pl,db,tName);
-				reasonOnceSQL(re,parser,oa,pl,db,tName);
-			else
+			mflag = oa2->genMemData(value);
+			if(mflag)
 			{
-				//thread tupdateData(updateData,value,oa);
-				thread tupdateData(updateDataSQL,to_string(value),oa,db,tName);
-				//cout<<"start updateDataSQL()"<<endl;
-				//updateDataSQL(to_string(value),oa,db,tName);
-				tupdateData.join();				
+				reasonRulesList(re,parser,oa2,pl);
+				mflag = false;
 			}
 		}
-		auto finish = chrono::high_resolution_clock::now();
-		chrono::duration<double> elapsed = finish - start;
-		cout<<"Elapsed time: "<<elapsed.count()<<" s"<<endl;
-
+		auto finish2 = chrono::high_resolution_clock::now();
+		chrono::duration<double> elapsed2 = finish2 - start2;
+		cout<<"when InferRound = 1, elapsed time: "<<elapsed1.count()<<" s"<<endl;
+		cout<<"when InferRound = 10, elapsed time: "<<elapsed2.count()<<" s"<<endl;
 
 		// while(1)
 		// {
@@ -223,7 +249,7 @@ int main(int argc, char *argv[])
 		delete re;
 		delete oa;
 		//delete opt;
-		sqlite3_close(db);
+		//sqlite3_close(db);
 		//}
 	}
 
