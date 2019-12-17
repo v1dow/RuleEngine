@@ -73,7 +73,7 @@ void updateDataSQL(const string& value, oriAllocator* oa, sqlite3* db, const str
 	}
 }
 
-void updatePara(optimize* opt, oriAllocator *oa, PARALIST *pl, int index)
+void updateParaOPT(optimize* opt, oriAllocator *oa, PARALIST *pl, int index)
 {
 	string pstring;
 	string value;
@@ -97,7 +97,7 @@ void updatePara(optimize* opt, oriAllocator *oa, PARALIST *pl, int index)
 					value = ConvertListToString(lv);
 					pstring = (*pit)->GetName() + "=" + value + "\n";
 					scan_string(pstring.c_str());
-					cout << "The info of original para is : " << pstring << endl;
+					//cout << "The info of original para is : " << pstring << endl;
 					yyparse();
 				}
 			}
@@ -116,7 +116,7 @@ void updatePara(optimize* opt, oriAllocator *oa, PARALIST *pl, int index)
 				{
 					oldstring = (*mit)->GetOldStr() + "\n";
 					scan_string(oldstring.c_str());
-					cout << "The info of intermediate para is : " << (*mit)->GetOldStr() << endl;
+					//cout << "The info of intermediate para is : " << (*mit)->GetOldStr() << endl;
 					yyparse();
 					//cout<< "intermediate result: "<<parser->GetResult()<<endl;
 					(*pit)->SetValue(parser->GetResult());
@@ -138,7 +138,7 @@ void updatePara(optimize* opt, oriAllocator *oa, PARALIST *pl, int index)
 					value = ConvertToString((*pit)->GetValue());
 					pstring = (*mit)->GetNewStr() + "=" + value + "\n";
 					scan_string(pstring.c_str());
-					cout << "The info of original para is : " << pstring << endl;
+					//cout << "The info of original para is : " << pstring << endl;
 					yyparse();
 				}
 			}
@@ -146,7 +146,29 @@ void updatePara(optimize* opt, oriAllocator *oa, PARALIST *pl, int index)
 	}
 	
 }
-
+void updatePara(oriAllocator* oa, PARALIST* pl, int index)
+{
+	string pstring;
+	string value;
+	double dvalue = 0;
+	LISTDOUBLE* lv;
+	PARALIST::iterator pit;
+	for(pit = pl->begin();pit != pl->end();pit++)
+	{
+		lv = oa->GetMemData()->at(index);
+		// for(double d = 0;d < oa->roundLength;d++)
+		// {
+		// 	fin>>dvalue;
+		// 	lv->push_back(dvalue);
+		// }
+		(*pit)->SetListValue(lv);
+		value = ConvertListToString(lv);
+        pstring = (*pit)->GetName() + "=" + value+"\n";
+        scan_string(pstring.c_str());
+        //cout<<"The info of para is : "<< pstring<<endl;
+        yyparse();
+	}
+}
 void updatePara1(PARALIST *pl, double dvalue)
 {
 	string pstring;
@@ -158,7 +180,7 @@ void updatePara1(PARALIST *pl, double dvalue)
 		value = ConvertToString(dvalue);
 		pstring = (*pit)->GetName() + "=" + value + "\n";
 		scan_string(pstring.c_str());
-		cout << "The info of para is : " << pstring << endl;
+		//cout << "The info of para is : " << pstring << endl;
 		yyparse();
 	}
 }
@@ -356,7 +378,7 @@ void reasonRules(reason *re, calc::calc_parser *parser)
 	cout << "reasonRule complete." << endl;
 }
 
-void reasonOnce(optimize* opt, reason *re, calc::calc_parser *parser, oriAllocator *oa, PARALIST *pl)
+void reasonOnce(reason *re, calc::calc_parser *parser, oriAllocator *oa, PARALIST *pl)
 {
 	//unique_lock <mutex> lck(mtx);
 	//cv.wait(lck, [] { return ready; });
@@ -367,7 +389,7 @@ void reasonOnce(optimize* opt, reason *re, calc::calc_parser *parser, oriAllocat
 	ready = false;
 	for (int i = 0; i < oa->GetInferRound(); i++)
 	{
-		updatePara(opt, oa, pl, i);
+		updatePara(oa, pl, i);
 
 		RULELIST *rlist = re->GetRuleList();
 		RULELIST::iterator rit;
@@ -389,7 +411,40 @@ void reasonOnce(optimize* opt, reason *re, calc::calc_parser *parser, oriAllocat
 	//cv.notify_one();
 }
 
-void reasonOnceSQL(optimize* opt, reason *re, calc::calc_parser *parser, oriAllocator *oa, PARALIST *pl, sqlite3* db, const string& tName)
+void reasonOnceOPT(optimize* opt, reason *re, calc::calc_parser *parser, oriAllocator *oa, PARALIST *pl)
+{
+	//unique_lock <mutex> lck(mtx);
+	//cv.wait(lck, [] { return ready; });
+	
+	oa->loadFromDisk();
+	
+	//fileReady = false;
+	ready = false;
+	for (int i = 0; i < oa->GetInferRound(); i++)
+	{
+		updateParaOPT(opt, oa, pl, i);
+
+		RULELIST *rlist = re->GetRuleList();
+		RULELIST::iterator rit;
+		string rstring;
+		for (rit = rlist->begin(); rit != rlist->end(); rit++)
+		{
+			rstring = (*rit)->GetAntecedent() + "\n";
+			//cout << "rstring: " << rstring << endl;
+			scan_string(rstring.c_str());
+			yyparse();
+			if (parser->GetResult() == 1)
+			{
+				cout << "Trigger rule: " << (*rit)->GetRuleName() << "---" << (*rit)->GetAntecedent() << " THEN " << (*rit)->GetConsequent() << endl;
+			}
+		}
+	}
+	//processed = true;
+	//lck.unlock();
+	//cv.notify_one();
+}
+
+void reasonOnceSQL(reason *re, calc::calc_parser *parser, oriAllocator *oa, PARALIST *pl, sqlite3* db, const string& tName)
 {
 	//unique_lock <mutex> lck(mtx);
 	//cv.wait(lck, [] { return ready; });
@@ -401,7 +456,40 @@ void reasonOnceSQL(optimize* opt, reason *re, calc::calc_parser *parser, oriAllo
 	ready = false;
 	for (int i = 0; i < oa->GetInferRound(); i++)
 	{
-		updatePara(opt, oa, pl, i);
+		updatePara(oa, pl, i);
+
+		RULELIST *rlist = re->GetRuleList();
+		RULELIST::iterator rit;
+		string rstring;
+		for (rit = rlist->begin(); rit != rlist->end(); rit++)
+		{
+			rstring = (*rit)->GetAntecedent() + "\n";
+			//cout << "rstring: " << rstring << endl;
+			scan_string(rstring.c_str());
+			yyparse();
+			if (parser->GetResult() == 1)
+			{
+				cout << "Trigger rule: " << (*rit)->GetRuleName() << "---" << (*rit)->GetAntecedent() << " THEN " << (*rit)->GetConsequent() << endl;
+			}
+		}
+	}
+	//processed = true;
+	//lck.unlock();
+	//cv.notify_one();
+}
+void reasonOnceOPTSQL(optimize* opt, reason *re, calc::calc_parser *parser, oriAllocator *oa, PARALIST *pl, sqlite3* db, const string& tName)
+{
+	//unique_lock <mutex> lck(mtx);
+	//cv.wait(lck, [] { return ready; });
+	
+	//oa->loadFromDisk();
+	oa->loadFromSQL(db,tName);
+	
+	//fileReady = false;
+	ready = false;
+	for (int i = 0; i < oa->GetInferRound(); i++)
+	{
+		updateParaOPT(opt, oa, pl, i);
 
 		RULELIST *rlist = re->GetRuleList();
 		RULELIST::iterator rit;

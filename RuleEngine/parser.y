@@ -121,6 +121,9 @@ extern "C"
 %token MIN
 %token MAXS
 %token MEAN
+%token MEDIAN
+%token VAR
+%token STD
 
 %token EMPTY
 
@@ -220,6 +223,9 @@ expr
 	| MAXS '(' ADDRESS ',' expr ')'		{ $$ = parser->GetMaxs($3,$5); }
 	| MIN '(' listexpr ')'		{ $$ = parser->GetMin($3); }
 	| MEAN '(' listexpr ')'		{ $$ = parser->GetMean($3); }
+	| MEDIAN '(' listexpr ')'   { $$ = parser->GetMedian($3); }
+	| VAR '(' listexpr ')'		{ $$ = parser->GetVar($3); }
+	| STD '(' listexpr ')'		{ $$ = parser->GetStd($3); }
 	;
 listexpr
 	: LISTNUMBER			{ $$ = $1; }

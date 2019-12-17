@@ -13,6 +13,7 @@
 #include <errno.h>
 #include <sstream>
 #include <string>
+#include <algorithm>
 
 
 namespace calc{
@@ -76,6 +77,9 @@ public:
 	double GetMaxs(double* address, double value);
 	double GetMin(LISTDOUBLE* d);
 	double GetMean(LISTDOUBLE* d);
+	double GetMedian(LISTDOUBLE* d);
+	double GetVar(LISTDOUBLE* d);
+	double GetStd(LISTDOUBLE* d);
 
 	int GetStrIn(char* a1,char* a2);
 	int GetStrIn(symbol* a1,char* a2);

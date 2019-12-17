@@ -303,6 +303,43 @@ double calc_parser::GetMean(LISTDOUBLE*d)
 	//delete d;
 	return total/count;
 }
+double calc_parser::GetMedian(LISTDOUBLE* d)
+{
+	size_t size = d->size();
+
+ 	if (size == 0)
+  	{
+    	return 0;  // Undefined, really.
+  	}
+  	else
+  	{
+    	sort(d->begin(), d->end());
+    	if (size % 2 == 0)
+    	{
+      		return (d->at(size / 2 - 1) + d->at(size / 2)) / 2;
+    	}
+    	else 
+    	{
+      		return d->at(size / 2);
+    	}
+  	}
+}
+double calc_parser::GetVar(LISTDOUBLE* d)
+{
+	double result = 0;
+	double tmp = 0;
+	double mean = GetMean(d);
+	for(int i=0;i<d->size();i++)
+	{
+		tmp = d->at(i);
+		result += (tmp-mean)*(tmp-mean);
+	}
+	return result/(d->size() - 1);
+}
+double calc_parser::GetStd(LISTDOUBLE* d)
+{
+	return sqrt(GetVar(d));
+}
 int calc_parser::GetAnd(int a1,int a2)
 {
    	if(a1!=0&&a2!=0)

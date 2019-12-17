@@ -1,4 +1,5 @@
 #include "func.h"
+#include <chrono>
 
 extern reason* re;
 
@@ -86,11 +87,11 @@ int main(int argc, char *argv[])
 		reason *re = new reason();
 		re->InitReasonNetwork();
 		initReasonwork(re, parser);
-		oriAllocator *oa = new oriAllocator();
-		optimize *opt = new optimize();
-		opt->setOpTable(re);
-		reshapeRulePara(re, parser, opt);
-		opt->testOp();
+		oriAllocator *oa = new oriAllocator(0.01,1);
+		//optimize *opt = new optimize();
+		//opt->setOpTable(re);
+		//reshapeRulePara(re, parser, opt);
+		//opt->testOp();
 		srand((unsigned)time(NULL));
 
 		PARALIST *pl = re->GetParaList();
@@ -162,16 +163,16 @@ int main(int argc, char *argv[])
 		// 		mflag = oa->genMemData(value);
 		// 	}
 		// }
-		
 		while(1)
 		{
-			value = genRandData(0.8,1.5);
+			value = genRandData(0.7,1.5);
 			mflag = oa->genMemData(value);
 			if(mflag)
 				break;
 		}
 		//reasonOnce(re,parser,oa,pl);
-		while(1){
+		auto start = chrono::high_resolution_clock::now();
+		for(int i=0;i<oa->GetRoundLength()*oa->GetInferRound()*100;i++){
 			//thread treason(reasonOnce,opt,re,parser,oa,pl);
 			//updateData(oa);
 			/*
@@ -184,15 +185,22 @@ int main(int argc, char *argv[])
 			value = genRandData(0.7,1.5);
 
 			if(ready)
-				//reasonOnce(opt,re,parser,oa,pl);
-				reasonOnceSQL(opt,re,parser,oa,pl,db,tName);
+				//reasonOnce(re,parser,oa,pl);
+				//reasonOnceOPT(opt,re,parser,oa,pl);
+				//reasonOnceOPTSQL(opt,re,parser,oa,pl,db,tName);
+				reasonOnceSQL(re,parser,oa,pl,db,tName);
 			else
 			{
 				//thread tupdateData(updateData,value,oa);
 				thread tupdateData(updateDataSQL,to_string(value),oa,db,tName);
+				//cout<<"start updateDataSQL()"<<endl;
+				//updateDataSQL(to_string(value),oa,db,tName);
 				tupdateData.join();				
 			}
 		}
+		auto finish = chrono::high_resolution_clock::now();
+		chrono::duration<double> elapsed = finish - start;
+		cout<<"Elapsed time: "<<elapsed.count()<<" s"<<endl;
 
 
 		// while(1)
@@ -214,7 +222,8 @@ int main(int argc, char *argv[])
 
 		delete re;
 		delete oa;
-		delete opt;
+		//delete opt;
+		sqlite3_close(db);
 		//}
 	}
 

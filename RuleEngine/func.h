@@ -47,7 +47,14 @@ double genRandData(double low, double high);
 
 void updateData(double value, oriAllocator* oa);
 
+void updateDataSQL(const string& value, oriAllocator* oa, sqlite3* db, const string& tName);
+
 void updatePara(optimize* opt, oriAllocator *oa, PARALIST *pl, int index);
+
+void updateParaOPT(optimize* opt, oriAllocator *oa, PARALIST *pl, int index);
+
+void updatePara(oriAllocator* oa, PARALIST* pl, int index);
+
 
 void updatePara1(PARALIST *pl, double dvalue);
 
@@ -63,7 +70,13 @@ void testReason(reason *re, calc::calc_parser *parser);
 
 void reasonRules(reason *re, calc::calc_parser *parser);
 
-void reasonOnce(optimize* opt, reason *re, calc::calc_parser *parser, oriAllocator *oa, PARALIST *pl);
+void reasonOnce(reason *re, calc::calc_parser *parser, oriAllocator *oa, PARALIST *pl);
+
+void reasonOnceOPT(optimize* opt, reason *re, calc::calc_parser *parser, oriAllocator *oa, PARALIST *pl);
+
+void reasonOnceSQL(reason *re, calc::calc_parser *parser, oriAllocator *oa, PARALIST *pl, sqlite3* db, const string& tName);
+
+void reasonOnceOPTSQL(optimize* opt, reason* re, calc::calc_parser* parser, oriAllocator* oa, PARALIST* pl, sqlite3* db, const string& tName);
 
 void reasonIndeRules(reason *re, calc::calc_parser *parser);
 

@@ -80,7 +80,10 @@ extern int yydebug;
     MIN = 290,
     MAXS = 291,
     MEAN = 292,
-    EMPTY = 293
+    MEDIAN = 293,
+    VAR = 294,
+    STD = 295,
+    EMPTY = 296
   };
 #endif
 
@@ -97,7 +100,7 @@ union YYSTYPE
 	char*	strvalue;
 	double* address;
 
-#line 101 "parser.tab.h" /* yacc.c:1909  */
+#line 104 "parser.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

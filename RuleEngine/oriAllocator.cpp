@@ -21,9 +21,12 @@ oriAllocator::oriAllocator(const double samplingRate_, const double inferPeriod_
     samplingRate = samplingRate_;
     inferPeriod = inferPeriod_;
     roundLength = inferPeriod / samplingRate;
-    inferRound = 100 * 1024 * 1024 / (8 * roundLength);
+    //inferRound = 100 * 1024 * 1024 / (8 * roundLength);
+	inferRound = 40; 
     lengthCounter = 0;
     roundCounter = 0;
+	fileCounter = 0;
+	SQLCounter = 0;
     isReady = 0;
     memData = new deque<deque<double> *>();
     for (int i = 0; i < inferRound; i++)
@@ -57,7 +60,7 @@ bool oriAllocator::genMemData(double value)
         if (lengthCounter < roundLength)
         {
             (memData->at(roundCounter))->at(lengthCounter) = value;
-            cout << "deque[" << roundCounter << "][" << lengthCounter << "] update: " << value << endl;
+            //cout << "deque[" << roundCounter << "][" << lengthCounter << "] update: " << value << endl;
         }
     }
     lengthCounter++;
@@ -77,7 +80,7 @@ bool oriAllocator::appendFile(double value)
     if (fout.is_open())
     {
         fout<<value<<" ";
-        cout<<"file append value: "<<value<<endl;
+        //cout<<"file append value: "<<value<<endl;
         fileCounter++;
         return false;
     }
@@ -100,6 +103,7 @@ bool oriAllocator::appendSQL(sqlite3* db, const string& tName, const string& val
         return true;
     }
     addData(db,tName,value);
+	SQLCounter++;
     return false;
 }
 
@@ -128,9 +132,9 @@ void oriAllocator::loadFromDisk()
             //     }
             // }
             while(fin>>value){
-                cout<<"file data:"<<value<<endl;
+                //cout<<"file data:"<<value<<endl;
                 genMemData(value);
-                cout<<"read file value:"<<value<<endl;
+                //cout<<"read file value:"<<value<<endl;
             }
         }
     }

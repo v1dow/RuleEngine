@@ -68,6 +68,12 @@ string '[^\n^']*'
 "maxs"						{ return MAXS; }
 "MEAN"						{ return MEAN; }
 "mean"						{ return MEAN; }
+"MEDIAN"					{ return MEDIAN; }
+"median"					{ return MEDIAN; }
+"VAR"                       { return VAR; }
+"var"                       { return VAR; }
+"STD"                       { return STD; }
+"std"                       { return STD; }
 "IF" 						{;}
 "AND" 						{return AND;}
 "OR" 						{return OR;}
