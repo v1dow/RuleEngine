@@ -53,7 +53,7 @@ void updatePara(optimize* opt, oriAllocator *oa, PARALIST *pl, int index);
 
 void updateParaOPT(optimize* opt, oriAllocator *oa, PARALIST *pl, int index);
 
-void updatePara(reason* re, oriAllocator* oa, PARALIST* pl, int index);
+void updatePara(optimize* opt, reason* re, oriAllocator* oa, PARALIST* pl, int index);
 
 
 void updatePara1(PARALIST *pl, double dvalue);
@@ -70,13 +70,13 @@ void testReason(reason *re, calc::calc_parser *parser);
 
 void reasonRules(reason *re, calc::calc_parser *parser);
 
-void reasonRulesList(reason *re, calc::calc_parser *parser, oriAllocator *oa, PARALIST *pl);
+void reasonRulesList(optimize* opt, reason *re, calc::calc_parser *parser, oriAllocator *oa, PARALIST *pl);
 
-void reasonOnce(reason *re, calc::calc_parser *parser, oriAllocator *oa, PARALIST *pl);
+void reasonOnce(optimize* opt, reason *re, calc::calc_parser *parser, oriAllocator *oa, PARALIST *pl);
 
 void reasonOnceOPT(optimize* opt, reason *re, calc::calc_parser *parser, oriAllocator *oa, PARALIST *pl);
 
-void reasonOnceSQL(reason *re, calc::calc_parser *parser, oriAllocator *oa, PARALIST *pl, sqlite3* db, const string& tName);
+void reasonOnceSQL(optimize* opt, reason *re, calc::calc_parser *parser, oriAllocator *oa, PARALIST *pl, sqlite3* db, const string& tName);
 
 void reasonOnceOPTSQL(optimize* opt, reason* re, calc::calc_parser* parser, oriAllocator* oa, PARALIST* pl, sqlite3* db, const string& tName);
 

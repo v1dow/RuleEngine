@@ -146,7 +146,7 @@ void updateParaOPT(optimize* opt, oriAllocator *oa, PARALIST *pl, int index)
 	}
 	
 }
-void updatePara(reason* re, oriAllocator* oa, PARALIST* pl, int index)
+void updatePara(optimize* opt, reason* re, oriAllocator* oa, PARALIST* pl, int index)
 {
 	string mstring;
 	string pstring;
@@ -154,6 +154,7 @@ void updatePara(reason* re, oriAllocator* oa, PARALIST* pl, int index)
 	double dvalue = 0;
 	LISTDOUBLE* lv;
 	PARALIST::iterator pit;
+	OPLIST* opList = opt->GetOpList();
 	for(pit = pl->begin();pit != pl->begin()+re->GetOriParaNum();pit++)
 	{
 		lv = oa->GetMemData()->at(index);
@@ -178,9 +179,9 @@ void updatePara(reason* re, oriAllocator* oa, PARALIST* pl, int index)
 			MIDLIST::iterator mit;
 			for(mit = mList->begin();mit!=mList->end();mit++)
 			{
-				if(*(pit)->GetName()==*(mit)->GetNewStr())
+				if((*pit)->GetName()==(*mit)->GetNewStr())
 				{
-					mstring = *(mit)->GetOldStr()+"\n";
+					mstring = (*mit)->GetOldStr()+"\n";
 					scan_string(mstring.c_str());
 					yyparse();
 					dvalue = parser->GetResult();
@@ -405,11 +406,11 @@ void reasonRules(reason *re, calc::calc_parser *parser)
 	cout << "reasonRule complete." << endl;
 }
 
-void reasonRulesList(reason *re, calc::calc_parser *parser, oriAllocator *oa, PARALIST *pl)
+void reasonRulesList(optimize* opt, reason *re, calc::calc_parser *parser, oriAllocator *oa, PARALIST *pl)
 {
 	for (int i = 0; i < oa->GetInferRound(); i++)
 	{
-		updatePara(oa, pl, i);
+		updatePara(opt, re, oa, pl, i);
 
 		RULELIST *rlist = re->GetRuleList();
 		RULELIST::iterator rit;
@@ -430,7 +431,7 @@ void reasonRulesList(reason *re, calc::calc_parser *parser, oriAllocator *oa, PA
 	}
 }
 
-void reasonOnce(reason *re, calc::calc_parser *parser, oriAllocator *oa, PARALIST *pl)
+void reasonOnce(optimize* opt, reason *re, calc::calc_parser *parser, oriAllocator *oa, PARALIST *pl)
 {
 	//unique_lock <mutex> lck(mtx);
 	//cv.wait(lck, [] { return ready; });
@@ -441,7 +442,7 @@ void reasonOnce(reason *re, calc::calc_parser *parser, oriAllocator *oa, PARALIS
 	ready = false;
 	for (int i = 0; i < oa->GetInferRound(); i++)
 	{
-		updatePara(oa, pl, i);
+		updatePara(opt, re, oa, pl, i);
 
 		RULELIST *rlist = re->GetRuleList();
 		RULELIST::iterator rit;
@@ -496,7 +497,7 @@ void reasonOnceOPT(optimize* opt, reason *re, calc::calc_parser *parser, oriAllo
 	//cv.notify_one();
 }
 
-void reasonOnceSQL(reason *re, calc::calc_parser *parser, oriAllocator *oa, PARALIST *pl, sqlite3* db, const string& tName)
+void reasonOnceSQL(optimize* opt, reason *re, calc::calc_parser *parser, oriAllocator *oa, PARALIST *pl, sqlite3* db, const string& tName)
 {
 	//unique_lock <mutex> lck(mtx);
 	//cv.wait(lck, [] { return ready; });
@@ -508,7 +509,7 @@ void reasonOnceSQL(reason *re, calc::calc_parser *parser, oriAllocator *oa, PARA
 	ready = false;
 	for (int i = 0; i < oa->GetInferRound(); i++)
 	{
-		updatePara(oa, pl, i);
+		updatePara(opt, re, oa, pl, i);
 
 		RULELIST *rlist = re->GetRuleList();
 		RULELIST::iterator rit;
