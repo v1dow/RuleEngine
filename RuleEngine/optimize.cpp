@@ -153,11 +153,11 @@ void optimize::testOp()
 	
 	for(;opit!=opList->end();opit++)
 	{
-		cout<<(*opit)->GetName()<<": ";
+		cout<<(*opit)->GetName()<<": "<<endl;
 		MIDLIST* mList = (*opit)->GetMidList();
 		MIDLIST::iterator mit;
 		for(mit = mList->begin();mit!=mList->end();mit++)
-			cout<<(*mit)->GetString()<<" "<<endl;
+			cout<<(*mit)->GetString()<<":"<<(*mit)->GetValue()<<endl;
 	}
 }
 

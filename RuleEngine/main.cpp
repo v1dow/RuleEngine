@@ -87,12 +87,16 @@ int main(int argc, char *argv[])
 		reason *re = new reason();
 		re->InitReasonNetwork();
 		initReasonwork(re, parser);
-		// oriAllocator *oa = new oriAllocator(0.01,1);
-		//optimize *opt = new optimize();
-		//opt->setOpTable(re);
-		//reshapeRulePara(re, parser, opt);
-		//opt->testOp();
+		oriAllocator *oa = new oriAllocator(0.01,1);
+		optimize *opt = new optimize();
+		opt->setOpTable(re);
+		reshapeRulePara(re, parser, opt);
+		opt->testOp();
 		srand((unsigned)time(NULL));
+
+		cout<<"------------before reshape------------"<<endl;
+		re.testPara();
+		re.testRule();
 
 		PARALIST *pl = re->GetParaList();
 		/*
@@ -198,7 +202,7 @@ int main(int argc, char *argv[])
 		// 		tupdateData.join();				
 		// 	}
 		// }
-		oriAllocator *oa1 = new oriAllocator(1000,1);
+		oriAllocator *oa1 = new oriAllocator(100,1);
 		for(int i=0;i<oa1->GetRoundLength()*1000;i++)
 		{
 			value = genRandData(0.7,1.5);
@@ -215,44 +219,44 @@ int main(int argc, char *argv[])
 		auto finish1 = chrono::high_resolution_clock::now();
 		chrono::duration<double> elapsed1 = finish1 - start1;
 
-		auto start2 = chrono::high_resolution_clock::now();
-		oriAllocator *oa2 = new oriAllocator(1000,10);
-		for(int i=0;i<oa2->GetRoundLength()*1000;i++)
-		{
-			value = genRandData(0.7,1.5);
-			mflag = oa2->genMemData(value);
-			//cout<<"value: "<<value<<endl;
-			//cout<<"test2, count i: "<<i<<endl;
-			if(mflag)
-			{
-				//oa2->testMemData();
-				reasonRulesList(re,parser,oa2,pl);
-				mflag = false;
-			}
-		}
-		auto finish2 = chrono::high_resolution_clock::now();
-		chrono::duration<double> elapsed2 = finish2 - start2;
+		// auto start2 = chrono::high_resolution_clock::now();
+		// oriAllocator *oa2 = new oriAllocator(1000,10);
+		// for(int i=0;i<oa2->GetRoundLength()*1000;i++)
+		// {
+		// 	value = genRandData(0.7,1.5);
+		// 	mflag = oa2->genMemData(value);
+		// 	//cout<<"value: "<<value<<endl;
+		// 	//cout<<"test2, count i: "<<i<<endl;
+		// 	if(mflag)
+		// 	{
+		// 		//oa2->testMemData();
+		// 		reasonRulesList(re,parser,oa2,pl);
+		// 		mflag = false;
+		// 	}
+		// }
+		// auto finish2 = chrono::high_resolution_clock::now();
+		// chrono::duration<double> elapsed2 = finish2 - start2;
 
-		auto start3 = chrono::high_resolution_clock::now();
-		oriAllocator *oa3 = new oriAllocator(1000,100);
-		for(int i=0;i<oa3->GetRoundLength()*1000;i++)
-		{
-			value = genRandData(0.7,1.5);
-			mflag = oa3->genMemData(value);
-			//cout<<"value: "<<value<<endl;
-			//cout<<"test2, count i: "<<i<<endl;
-			if(mflag)
-			{
-				//oa2->testMemData();
-				reasonRulesList(re,parser,oa3,pl);
-				mflag = false;
-			}
-		}
-		auto finish3 = chrono::high_resolution_clock::now();
-		chrono::duration<double> elapsed3 = finish3 - start3;
-		cout<<"when InferRound = 1, elapsed time: "<<elapsed1.count()<<" s"<<endl;
-		cout<<"when InferRound = 10, elapsed time: "<<elapsed2.count()<<" s"<<endl;
-		cout<<"when InferRound = 100, elapsed time: "<<elapsed3.count()<<" s"<<endl;
+		// auto start3 = chrono::high_resolution_clock::now();
+		// oriAllocator *oa3 = new oriAllocator(1000,100);
+		// for(int i=0;i<oa3->GetRoundLength()*1000;i++)
+		// {
+		// 	value = genRandData(0.7,1.5);
+		// 	mflag = oa3->genMemData(value);
+		// 	//cout<<"value: "<<value<<endl;
+		// 	//cout<<"test2, count i: "<<i<<endl;
+		// 	if(mflag)
+		// 	{
+		// 		//oa2->testMemData();
+		// 		reasonRulesList(re,parser,oa3,pl);
+		// 		mflag = false;
+		// 	}
+		// }
+		// auto finish3 = chrono::high_resolution_clock::now();
+		// chrono::duration<double> elapsed3 = finish3 - start3;
+		// cout<<"when InferRound = 1, elapsed time: "<<elapsed1.count()<<" s"<<endl;
+		// cout<<"when InferRound = 10, elapsed time: "<<elapsed2.count()<<" s"<<endl;
+		// cout<<"when InferRound = 100, elapsed time: "<<elapsed3.count()<<" s"<<endl;
 
 		// while(1)
 		// {
@@ -273,8 +277,8 @@ int main(int argc, char *argv[])
 
 		delete re;
 		delete oa1;
-		delete oa2;
-		delete oa3;
+		// delete oa2;
+		// delete oa3;
 		//delete opt;
 		sqlite3_close(db);
 		//}

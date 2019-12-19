@@ -165,7 +165,7 @@ void updatePara(oriAllocator* oa, PARALIST* pl, int index)
 		value = ConvertListToString(lv);
         pstring = (*pit)->GetName() + "=" + value+"\n";
         scan_string(pstring.c_str());
-        //cout<<"The info of para is : "<< pstring<<endl;
+        cout<<"The info of para is : "<< pstring<<endl;
         yyparse();
 	}
 }
@@ -390,12 +390,12 @@ void reasonRulesList(reason *re, calc::calc_parser *parser, oriAllocator *oa, PA
 		for (rit = rlist->begin(); rit != rlist->end(); rit++)
 		{
 			rstring = (*rit)->GetAntecedent() + "\n";
-			//cout << "rstring: " << rstring << endl;
+			cout << "rstring: " << rstring << endl;
 			scan_string(rstring.c_str());
 			yyparse();
 			if (parser->GetResult() == 1)
 			{
-				//cout << "Trigger rule: " << (*rit)->GetRuleName() << "---" << (*rit)->GetAntecedent() << " THEN " << (*rit)->GetConsequent() << endl;
+				cout << "Trigger rule: " << (*rit)->GetRuleName() << "---" << (*rit)->GetAntecedent() << " THEN " << (*rit)->GetConsequent() << endl;
 			}
 			//else
 				//cout<<"Trigger no rules."<<endl;

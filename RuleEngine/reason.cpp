@@ -42,7 +42,9 @@ int reason::InitReasonNetwork()
 
 	maptListToMap();
 	mappListToMap();
-	//testPara();
+	cout<<"------------before reshape------------"<<endl;
+	testPara();
+	testRule();
 	//testIndeRList();
 	//testNestedRuleList();
 	//testToken();
@@ -55,26 +57,40 @@ int reason::testPara()
 	RULELIST::iterator rit;
 	TOKENLIST::iterator tit;
 	TOKENLIST *ttmp = NULL;
+	cout<<"pList:";
 	for (;pit!=pList->end();pit++)
 	{
-		rltmp = (*pit)->GetQuotedRuleList();
-		rit = rltmp->begin();
-		ttmp = (*pit)->GetQuotedTokenList();
-		tit = ttmp->begin();
-		for (;rit!=rltmp->end();rit++)
-		{
-			//cout<<"The QuotedRuleList 's member of "<<(*pit)->GetName()<< " are: "<<(*rit)->GetRuleName()<<endl;
-		}
-                //cout<<"The QuotedTokneList 's member of "<<(*pit)->GetName()<< " are: ";
-		for(;tit!=ttmp->end();tit++)
-		{
-                        //cout<<(*tit)->GetTokenName()<<" ";
-		}
-                //cout<<endl;
+		// rltmp = (*pit)->GetQuotedRuleList();
+		// rit = rltmp->begin();
+		// ttmp = (*pit)->GetQuotedTokenList();
+		// tit = ttmp->begin();
+		// for (;rit!=rltmp->end();rit++)
+		// {
+		// 	//cout<<"The QuotedRuleList 's member of "<<(*pit)->GetName()<< " are: "<<(*rit)->GetRuleName()<<endl;
+		// }
+        //         //cout<<"The QuotedTokneList 's member of "<<(*pit)->GetName()<< " are: ";
+		// for(;tit!=ttmp->end();tit++)
+		// {
+        //                 //cout<<(*tit)->GetTokenName()<<" ";
+		// }
+        //         //cout<<endl;
 		
-		
+		cout<<(*pit)->GetName()<<" ";
 
 	}
+	cout<<endl;
+
+	return 0;
+}
+int reason::testRule()
+{
+	RULELIST::iterator rit = rList->begin();
+	cout<<"rList:";
+	for(;rit != rList->end();rit++)
+	{
+		cout<<(*rit)->GetRuleName()<<" ";
+	}
+	cout<<endl;
 	return 0;
 }
 int reason::testIndeRList()

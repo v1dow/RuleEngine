@@ -41,6 +41,7 @@ public:
 	int testPara();
 	int testIndeRList();
 	int testNestedRuleList();
+	int testRule();
 	int testToken();
 	para* CreateParas(const string &pname,const string &ptype);
 private:
