@@ -395,8 +395,10 @@ void reasonRulesList(reason *re, calc::calc_parser *parser, oriAllocator *oa, PA
 			yyparse();
 			if (parser->GetResult() == 1)
 			{
-				cout << "Trigger rule: " << (*rit)->GetRuleName() << "---" << (*rit)->GetAntecedent() << " THEN " << (*rit)->GetConsequent() << endl;
+				//cout << "Trigger rule: " << (*rit)->GetRuleName() << "---" << (*rit)->GetAntecedent() << " THEN " << (*rit)->GetConsequent() << endl;
 			}
+			//else
+				//cout<<"Trigger no rules."<<endl;
 		}
 	}
 }
