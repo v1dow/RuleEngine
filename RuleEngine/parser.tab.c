@@ -1905,7 +1905,7 @@ yyreduce:
 
   case 71:
 #line 222 "parser.y" /* yacc.c:1646  */
-    { (yyval.value) = parser->GetMax((yyvsp[-1].listvalue)); }
+    { (yyval.value) = parser->GetMax((yyvsp[-1].listvalue)); printf("max value: %f",parser->GetMax((yyvsp[-1].listvalue))); }
 #line 1910 "parser.tab.c" /* yacc.c:1646  */
     break;
 

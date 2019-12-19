@@ -95,8 +95,8 @@ int main(int argc, char *argv[])
 		srand((unsigned)time(NULL));
 
 		cout<<"------------before reshape------------"<<endl;
-		re.testPara();
-		re.testRule();
+		re->testPara();
+		re->testRule();
 
 		PARALIST *pl = re->GetParaList();
 		/*
