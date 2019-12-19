@@ -155,43 +155,48 @@ void updatePara(optimize* opt, reason* re, oriAllocator* oa, PARALIST* pl, int i
 	LISTDOUBLE* lv;
 	PARALIST::iterator pit;
 	OPLIST* opList = opt->GetOpList();
-	for(int i = 0;i < re->GetOriParaNum();i++)
+	int i = 0;
+	for(pit = pl->begin();pit != pl->end();pit++)
 	{
-		lv = oa->GetMemData()->at(index);
-		// for(double d = 0;d < oa->roundLength;d++)
-		// {
-		// 	fin>>dvalue;
-		// 	lv->push_back(dvalue);
-		// }
-		pl->at(i)->SetListValue(lv);
-		value = ConvertListToString(lv);
-        pstring = pl->at(i)->GetName() + "=" + value+"\n";
-        scan_string(pstring.c_str());
-        cout<<"The info of para is : "<< pstring<<endl;
-        yyparse();
-	}
-	for(int i = re->GetOriParaNum();i < pl->size();i++)
-	{
-		OPLIST::iterator opit = opList->begin();
-		for(;opit!=opList->end();opit++)
+		if(i < re->GetOriParaNum())
 		{
-			MIDLIST* mList = (*opit)->GetMidList();
-			MIDLIST::iterator mit;
-			for(mit = mList->begin();mit!=mList->end();mit++)
+			lv = oa->GetMemData()->at(index);
+			// for(double d = 0;d < oa->roundLength;d++)
+			// {
+			// 	fin>>dvalue;
+			// 	lv->push_back(dvalue);
+			// }
+			(*pit)->SetListValue(lv);
+			value = ConvertListToString(lv);
+			pstring = (*pit)->GetName() + "=" + value+"\n";
+			scan_string(pstring.c_str());
+			cout<<"The info of para is : "<< pstring<<endl;
+			yyparse();
+			i++;
+		}
+		else
+		{
+			OPLIST::iterator opit = opList->begin();
+			for(;opit!=opList->end();opit++)
 			{
-				if(pl->at(i)->GetName()==(*mit)->GetNewStr())
+				MIDLIST* mList = (*opit)->GetMidList();
+				MIDLIST::iterator mit;
+				for(mit = mList->begin();mit!=mList->end();mit++)
 				{
-					mstring = (*mit)->GetOldStr()+"\n";
-					scan_string(mstring.c_str());
-					yyparse();
-					dvalue = parser->GetResult();
-					(*mit)->SetValue(dvalue);
-					pl->at(i)->SetValue(dvalue);
-					value = ConvertToString(dvalue);
-					pstring = pl->at(i)->GetName() + "=" + value + "\n";
-					scan_string(pstring.c_str());
-					cout << "The info of para is : " << pstring << endl;
-					yyparse();
+					if((*pit)->GetName()==(*mit)->GetNewStr())
+					{
+						mstring = (*mit)->GetOldStr()+"\n";
+						scan_string(mstring.c_str());
+						yyparse();
+						dvalue = parser->GetResult();
+						(*mit)->SetValue(dvalue);
+						(*pit)->SetValue(dvalue);
+						value = ConvertToString(dvalue);
+						pstring = (*pit)->GetName() + "=" + value + "\n";
+						scan_string(pstring.c_str());
+						cout << "The info of para is : " << pstring << endl;
+						yyparse();
+					}
 				}
 			}
 		}
