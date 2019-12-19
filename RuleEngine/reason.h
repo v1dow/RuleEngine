@@ -43,8 +43,11 @@ public:
 	int testNestedRuleList();
 	int testRule();
 	int testToken();
+	int GetOriParaNum();
 	para* CreateParas(const string &pname,const string &ptype);
 private:
+	int oriParaNum;
+
 	int LoadParaFromFile();
 	int LoadRuleFromFile();
 	int LoadTokenFromFile();

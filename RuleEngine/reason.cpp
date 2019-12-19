@@ -2,6 +2,7 @@
 
 reason::reason()
 {
+	oriParaNum = 0;
 	rList = new RULELIST();
 	pList = new PARALIST();
 	tList = new TOKENLIST();
@@ -88,7 +89,7 @@ int reason::testRule()
 	cout<<"rList:";
 	for(;rit != rList->end();rit++)
 	{
-		cout<<(*rit)->GetRuleName()<<" ";
+		cout<<(*rit)->GetAntecedent()<<" ";
 	}
 	cout<<endl;
 	return 0;
@@ -180,6 +181,7 @@ int reason::LoadParaFromFile()
 			str = str.erase(plength-1,1);
 		}
 		CreateParas(str,"NONE");
+		oriParaNum += 1;
 		memset(buff,'\0',sizeof(buff));
 	}
 	fclose(fp);
@@ -651,4 +653,8 @@ RULELIST* reason::GetIndeRules()
 NESTEDRULELIST* reason::GetNestedRules()
 {
 	return nestedRList;
+}
+int reason::GetOriParaNum()
+{
+	return oriParaNum;
 }

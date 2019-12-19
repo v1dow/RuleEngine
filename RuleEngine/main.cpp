@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
 			exit(1);
 		}
 		else
-			printf("open database successfully.");
+			printf("open database successfully.\n");
 
 
 		reason *re = new reason();
@@ -94,7 +94,7 @@ int main(int argc, char *argv[])
 		opt->testOp();
 		srand((unsigned)time(NULL));
 
-		cout<<"------------before reshape------------"<<endl;
+		cout<<"------------after reshape------------"<<endl;
 		re->testPara();
 		re->testRule();
 

@@ -53,7 +53,7 @@ void updatePara(optimize* opt, oriAllocator *oa, PARALIST *pl, int index);
 
 void updateParaOPT(optimize* opt, oriAllocator *oa, PARALIST *pl, int index);
 
-void updatePara(oriAllocator* oa, PARALIST* pl, int index);
+void updatePara(reason* re, oriAllocator* oa, PARALIST* pl, int index);
 
 
 void updatePara1(PARALIST *pl, double dvalue);
