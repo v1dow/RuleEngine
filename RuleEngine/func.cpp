@@ -155,7 +155,7 @@ void updatePara(optimize* opt, reason* re, oriAllocator* oa, PARALIST* pl, int i
 	LISTDOUBLE* lv;
 	PARALIST::iterator pit;
 	OPLIST* opList = opt->GetOpList();
-	for(pit = pl->begin();pit != pl->begin()+re->GetOriParaNum();pit++)
+	for(int i = 0;i < re->GetOriParaNum();i++)
 	{
 		lv = oa->GetMemData()->at(index);
 		// for(double d = 0;d < oa->roundLength;d++)
@@ -163,14 +163,14 @@ void updatePara(optimize* opt, reason* re, oriAllocator* oa, PARALIST* pl, int i
 		// 	fin>>dvalue;
 		// 	lv->push_back(dvalue);
 		// }
-		(*pit)->SetListValue(lv);
+		pl->at(i)->SetListValue(lv);
 		value = ConvertListToString(lv);
-        pstring = (*pit)->GetName() + "=" + value+"\n";
+        pstring = pl->at(i)->GetName() + "=" + value+"\n";
         scan_string(pstring.c_str());
         cout<<"The info of para is : "<< pstring<<endl;
         yyparse();
 	}
-	for(pit = pl->begin()+re->GetOriParaNum();pit != pl->end();pit++)
+	for(int i = re->GetOriParaNum();i < pl->size();i++)
 	{
 		OPLIST::iterator opit = opList->begin();
 		for(;opit!=opList->end();opit++)
@@ -179,16 +179,16 @@ void updatePara(optimize* opt, reason* re, oriAllocator* oa, PARALIST* pl, int i
 			MIDLIST::iterator mit;
 			for(mit = mList->begin();mit!=mList->end();mit++)
 			{
-				if((*pit)->GetName()==(*mit)->GetNewStr())
+				if(pl->at(i)->GetName()==(*mit)->GetNewStr())
 				{
 					mstring = (*mit)->GetOldStr()+"\n";
 					scan_string(mstring.c_str());
 					yyparse();
 					dvalue = parser->GetResult();
 					(*mit)->SetValue(dvalue);
-					(*pit)->SetValue(dvalue);
+					pl->at(i)->SetValue(dvalue);
 					value = ConvertToString(dvalue);
-					pstring = (*pit)->GetName() + "=" + value + "\n";
+					pstring = pl->at(i)->GetName() + "=" + value + "\n";
 					scan_string(pstring.c_str());
 					cout << "The info of para is : " << pstring << endl;
 					yyparse();

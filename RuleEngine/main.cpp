@@ -212,7 +212,7 @@ int main(int argc, char *argv[])
 			if(mflag)
 			{
 				//oa1->testMemData();
-				reasonRulesList(re,parser,oa1,pl);
+				reasonRulesList(opt,re,parser,oa1,pl);
 				mflag = false;
 			}
 		}
