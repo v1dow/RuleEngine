@@ -3,6 +3,7 @@
         "string": "cpp",
         "ostream": "cpp",
         "*.y": "cpp",
-        "iostream": "cpp"
+        "iostream": "cpp",
+        "chrono": "cpp"
     }
 }

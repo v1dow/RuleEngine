@@ -22,6 +22,7 @@
 #include "optimize.h"
 #include "parser.tab.h"
 #include "oriAllocator.h"
+#include "window.h"
 
 #define RAND_M 32767
 
@@ -38,6 +39,12 @@ extern void yyerror(const char *);
 extern void scan_string(const char* str);
 extern void delete_buffer();
 }
+
+deque<double>* combineWindows(deque<double>** wondows, int size);
+
+double GetMax(deque<double>* d);
+
+double GetMin(deque<double>* d);
 
 string ConvertToString(double value);
 
@@ -57,6 +64,10 @@ void updatePara(optimize* opt, reason* re, oriAllocator* oa, PARALIST* pl, int i
 
 
 void updatePara1(PARALIST *pl, double dvalue);
+
+void updateParas1(PARALIST* pl, deque<double>** data);
+
+void updateParas2(PARALIST* pl, double[] buffer);
 
 void initReasonwork(reason *re, calc::calc_parser *parser);
 

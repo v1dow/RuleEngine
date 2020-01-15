@@ -64,41 +64,159 @@ int main(int argc, char *argv[])
 		//cout<<"现在从该文档中读入数据"<<endl;
 		//sleep(1);
 
-		int curIndex = 0;
-		double value = 0;
-		bool mflag = false;
-		bool dflag = false;
-		bool rflag = false;
+		// int curIndex = 0;
+		// double value = 0;
+		// bool mflag = false;
+		// bool dflag = false;
+		// bool rflag = false;
 
-		sqlite3* db = NULL;
-		const string tName = "vibration";
-		int rc;
-		rc = sqlite3_open("test.db",&db);
-		if(rc)
-		{
-			fprintf(stderr,"Can't open database:%s\n",sqlite3_errmsg(db));
-			sqlite3_close(db);
-			exit(1);
-		}
-		else
-			printf("open database successfully.\n");
+		// sqlite3* db = NULL;
+		// const string tName = "vibration";
+		// int rc;
+		// rc = sqlite3_open("test.db",&db);
+		// if(rc)
+		// {
+		// 	fprintf(stderr,"Can't open database:%s\n",sqlite3_errmsg(db));
+		// 	sqlite3_close(db);
+		// 	exit(1);
+		// }
+		// else
+		// 	printf("open database successfully.\n");
 
+		int timeseries[] = {10,15,20,25,30,35};
+		auto timesize = sizeof(timeseries)/sizeof(int);
+		double timescale = 0;
+		double tmpscale = 0;
+		double samplingFreq = 0.01;
+		bool flag = false;
 
 		reason *re = new reason();
 		re->InitReasonNetwork();
 		initReasonwork(re, parser);
-		oriAllocator *oa = new oriAllocator(0.01,1);
-		optimize *opt = new optimize();
-		opt->setOpTable(re);
-		reshapeRulePara(re, parser, opt);
-		opt->testOp();
 		srand((unsigned)time(NULL));
 
-		cout<<"------------after reshape------------"<<endl;
-		re->testPara();
-		re->testRule();
+		/* ************************
+		* Scheme without optimize *
+		************************ */
+/*
+		auto start = chrono::high_resolution_clock::now();
 
-		PARALIST *pl = re->GetParaList();
+		window* windows[timesize];
+		deque<double>* bigwindow[timesize];
+		for(int i = 0;i < timesize;i++){
+			timescale = timeseries[i] - tmpscale;
+			tmpscale = timescale;
+			windows->at(i) = new window(samplingFreq,timescale);
+		}
+
+		for(int k=0;k<100;k++)
+		{
+			for(int i=0;i<timeseries[timesize-1]/samplingFreq;i++)
+			{
+				value = genRandData(0.7,1.5);
+				for(int j = 0;j < timesize;j++){
+					if(!flag){
+						windows->at(j)->fillWindow(value);
+					}else{
+						bigwindow->at(j) = combineWindows(windows,j);
+						flag = false;
+					}
+				}
+			}
+
+			PARALIST *pl = re->GetParaList();
+
+			updateParas1(pl,bigwindow);
+
+			reasonRules(re,parser);
+		}
+
+		delete[] windows;
+
+		auto finish = chrono::high_resolution_clock::now();
+		chrono::duration<double> elapsed = finish - start;
+		cout<<"elapsed time: "<<elapsed.count()<<" s"<<endl;
+*/
+
+		/* *********************
+		* Scheme with optimize *
+		********************* */
+/*
+		auto start = chrono::high_resolution_clock::now();
+
+		window* windowslice;
+		deque<double> tmpdq;
+
+		double buffer[6] = {0,0,0,0,0,0};
+		double maxbuffer[6] = {0,0,0,0,0,0};
+		double minbuffer[6] = {0,0,0,0,0,0};
+
+	 	for(int k=0;k<100;k++)
+		{   
+			for(int i=0;i<timeseries[timesize-1]/samplingFreq;i++)
+			{
+				value = genRandData(0.7,1.5);
+				for(int j = 0;j < timesize;j++){
+					timescale = timeseries[j] - tmpscale;
+					tmpscale = timescale;
+					windowslice = new window(samplingFreq,timescale);
+					if(!flag){
+						windowslice->fillWindow(value);
+					}else{
+						maxbuffer[j] = GetMax(windowslice->getData());
+						minbuffer[j] = GetMin(windowslice->getData());
+						flag = false;
+						delete windowslice;
+					}
+				}
+			}
+			tmpdq.push_back(maxbuffer[0]);
+			buffer[0] =  GetMax(tmpdq);
+			tmpdq.clear();
+			tmpdq.push_back(minbuffer[0]);
+			tmpdq.push_back(minbuffer[1]);
+			buffer[1] =  GetMin(tmpdq);
+			tmpdq.clear();
+			tmpdq.push_back(buffer[1]);
+			tmpdq.push_back(minbuffer[2]);
+			buffer[2] =  GetMin(tmpdq);
+			tmpdq.clear();
+			tmpdq.push_back(buffer[0]);
+			tmpdq.push_back(maxbuffer[1]);
+			tmpdq.push_back(maxbuffer[2]);
+			tmpdq.push_back(maxbuffer[3]);
+			buffer[3] =  GetMax(tmpdq);
+			tmpdq.clear();
+			tmpdq.push_back(maxbuffer[4]);
+			buffer[4] =  GetMax(tmpdq);
+			tmpdq.clear();
+			tmpdq.push_back(minbuffer[3]);
+			tmpdq.push_back(minbuffer[4]);
+			tmpdq.push_back(minbuffer[5]);
+			buffer[5] =  GetMin(tmpdq);
+
+			PARALIST *pl = re->GetParaList();
+
+			updateParas2(pl,buffer);
+
+			reasonRules(re,parser);
+		}
+		auto finish = chrono::high_resolution_clock::now();
+		chrono::duration<double> elapsed = finish - start;
+		cout<<"elapsed time: "<<elapsed.count()<<" s"<<endl;
+*/
+
+		// oriAllocator *oa = new oriAllocator(0.01,1);
+		// optimize *opt = new optimize();
+		// opt->setOpTable(re);
+		// reshapeRulePara(re, parser, opt);
+		// opt->testOp();
+
+		// cout<<"------------after reshape------------"<<endl;
+		// re->testPara();
+		// re->testRule();
+
+		// PARALIST *pl = re->GetParaList();
 		/*
             PARALIST::iterator pit;
             string value;
@@ -276,11 +394,11 @@ int main(int argc, char *argv[])
 		// }
 
 		delete re;
-		delete oa1;
+		//delete oa1;
 		// delete oa2;
 		// delete oa3;
 		//delete opt;
-		sqlite3_close(db);
+		//sqlite3_close(db);
 		//}
 	}
 

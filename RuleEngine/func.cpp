@@ -13,6 +13,43 @@ extern void scan_string(const char* str);
 extern void delete_buffer();
 }
 
+deque<double>* combineWindows(deque<double>** wondows, int idx){
+	deque<double>* combinedWindow;
+	for(int i=0;i<=idx;i++){
+		combinedWindow->insert(combinedWindow->end(),windows->at(i)->begin(),windows->at(i)->end());
+	}
+
+	return combinedWindow;
+}
+
+double GetMax(deque<double>* d)
+{
+	double max=-999999999;
+	double t=0;
+	for(int i=0;i<d->size();i++)
+	{
+		t=d->at(i);
+		if(t>max)max=t;		
+	}
+	//d->clear();
+	//delete d;
+	return max;
+}
+
+double GetMin(deque<double>* d)
+{
+	double min=9999999999;
+	double t=0;
+	for(int i=0;i<d->size();i++)
+	{
+		t=d->at(i);
+		if(t<min)min=t;		
+	}
+	//d->clear();
+	//delete d;
+	return min;
+}
+
 string ConvertToString(double value)
 {
 	stringstream ss;
@@ -215,6 +252,45 @@ void updatePara1(PARALIST *pl, double dvalue)
 		scan_string(pstring.c_str());
 		//cout << "The info of para is : " << pstring << endl;
 		yyparse();
+	}
+}
+
+void updateParas1(PARALIST* pl, deque<double>** data){
+	string pstring;
+	string value;
+	LISTDOUBLE* lv
+	PARALIST::iterator pit;
+
+	int i = 0;
+	for (pit = pl->begin(); pit != pl->end(); pit++){
+		lv = data->at(i);
+		(*pit)->SetListValue(lv);
+		value = ConvertListToString(lv);
+		pstring = (*pit)->GetName() + "=" + value+"\n";
+		scan_string(pstring.c_str());
+		cout<<"The info of para is : "<< pstring<<endl;
+		yyparse();
+		i++;
+	}
+}
+
+void updateParas2(PARALIST* pl, double[] buffer){
+	string pstring;
+	string value;
+	double dvalue = 0;
+	PARALIST::iterator pit;
+
+	int i = 0;
+	for (pit = pl->begin(); pit != pl->end(); pit++)
+	{
+		dvalue = buffer[i];
+		(*pit)->SetValue(dvalue);
+		value = ConvertToString(dvalue);
+		pstring = (*pit)->GetName() + "=" + value + "\n";
+		scan_string(pstring.c_str());
+		//cout << "The info of para is : " << pstring << endl;
+		yyparse();
+		i++;
 	}
 }
 
