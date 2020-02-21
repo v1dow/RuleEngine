@@ -2,11 +2,14 @@ LEX=flex
 YACC=bison
 CC=g++
 all:libRuleEngine.so
-libRuleEngine.so: sqliteFunc.o func.o oriAllocator.o intermediate.o statOp.o optimize.o calc.o calc_parser.o lex.yy.o parser.tab.o reason.o rule.o para.o token.o tinystr.o tinyxmlparser.o tinyxml.o tinyxmlerror.o
-	g++ -fPIC -shared -o libRuleEngine.so sqliteFunc.o func.o oriAllocator.o intermediate.o statOp.o optimize.o calc.o calc_parser.o lex.yy.o parser.tab.o symbol.o reason.o rule.o para.o token.o tinystr.o tinyxmlparser.o tinyxml.o tinyxmlerror.o -lpthread -lsqlite3
+libRuleEngine.so: window.o sqliteFunc.o func.o oriAllocator.o intermediate.o statOp.o optimize.o calc.o calc_parser.o lex.yy.o parser.tab.o reason.o rule.o para.o token.o tinystr.o tinyxmlparser.o tinyxml.o tinyxmlerror.o
+	g++ -fPIC -shared -o libRuleEngine.so window.o sqliteFunc.o func.o oriAllocator.o intermediate.o statOp.o optimize.o calc.o calc_parser.o lex.yy.o parser.tab.o symbol.o reason.o rule.o para.o token.o tinystr.o tinyxmlparser.o tinyxml.o tinyxmlerror.o -lpthread -lsqlite3
 
 sqliteFunc.o: sqliteFunc.cpp
 	g++ -fPIC -c sqliteFunc.cpp
+
+window.o: window.cpp
+	g++ -fPIC -c window.cpp
 
 func.o: func.cpp
 	g++ -fPIC -c func.cpp

@@ -40,11 +40,23 @@ extern void scan_string(const char* str);
 extern void delete_buffer();
 }
 
-deque<double>* combineWindows(deque<double>** wondows, int size);
+deque<double>* combineWindows(window* windows[], int size);
 
 double GetMax(deque<double>* d);
 
 double GetMin(deque<double>* d);
+
+double GetMean(deque<double>* d);
+
+double GetVar(deque<double>* d);
+
+void makebuffer(double buffer[], double maxindex[], double maxbuffer[], double minindex[], double minbuffer[], size_t maxsize, size_t minsize);
+
+void makebuffer1(double buffer[], double minindex[], double minbuffer[], size_t minsize);
+
+void makebuffer3(double buffer[], double maxindex[], double maxbuffer[], double minindex[], double minbuffer[], double meanindex[], double meanbuffer[],size_t maxsize, size_t minsize, size_t meansize);
+
+void makebuffer4(double buffer[], double maxindex[], double maxbuffer[], double minindex[], double minbuffer[], double meanindex[], double meanbuffer[], double varindex[], double varbuffer[], size_t maxsize, size_t minsize, size_t meansize, size_t varsize);
 
 string ConvertToString(double value);
 
@@ -65,11 +77,13 @@ void updatePara(optimize* opt, reason* re, oriAllocator* oa, PARALIST* pl, int i
 
 void updatePara1(PARALIST *pl, double dvalue);
 
-void updateParas1(PARALIST* pl, deque<double>** data);
+void updateParas1(PARALIST* pl, deque<double>* data[]);
 
-void updateParas2(PARALIST* pl, double[] buffer);
+void updateParas2(PARALIST* pl, double buffer[]);
 
-void initReasonwork(reason *re, calc::calc_parser *parser);
+void initReasonwork1(reason *re, calc::calc_parser *parser);
+
+void initReasonwork2(reason *re, calc::calc_parser *parser);
 
 void reshapeRulePara(reason *re, calc::calc_parser *parser, optimize* opt);
 

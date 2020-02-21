@@ -11,7 +11,7 @@ window::window(){
 window::window(const double samplingFreq_, const double timescale_){
     samplingFreq = samplingFreq_;
     timescale = timescale_;
-    size = samplingFreq/timescale;
+    size = timescale/samplingFreq;
     counter = 0;
     rawData = new deque<double>(size,0);
 }

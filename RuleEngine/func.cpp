@@ -13,10 +13,10 @@ extern void scan_string(const char* str);
 extern void delete_buffer();
 }
 
-deque<double>* combineWindows(deque<double>** wondows, int idx){
-	deque<double>* combinedWindow;
+deque<double>* combineWindows(window* windows[], int idx){
+	deque<double>* combinedWindow = new deque<double>();
 	for(int i=0;i<=idx;i++){
-		combinedWindow->insert(combinedWindow->end(),windows->at(i)->begin(),windows->at(i)->end());
+		combinedWindow->insert(combinedWindow->end(),windows[i]->getData()->begin(),windows[i]->getData()->end());
 	}
 
 	return combinedWindow;
@@ -50,6 +50,282 @@ double GetMin(deque<double>* d)
 	return min;
 }
 
+double GetMean(deque<double>* d)
+{
+	double total=0;
+	double t=0;
+	int count = d->size();
+	if(count<=0)return 0;
+
+	for(int i=0;i<count;i++)
+	{
+		t=d->at(i);
+		total+=t;		
+	}
+	//d->clear();
+	//delete d;
+	return total/count;
+}
+
+double GetVar(deque<double>* d)
+{
+	double result = 0;
+	double tmp = 0;
+	double mean = GetMean(d);
+	for(int i=0;i<d->size();i++)
+	{
+		tmp = d->at(i);
+		result += (tmp-mean)*(tmp-mean);
+	}
+	return result/(d->size() - 1);
+}
+
+void makebuffer(double buffer[], double maxindex[], double maxbuffer[], double minindex[], double minbuffer[], size_t maxsize, size_t minsize)
+{
+	deque<double>* tmpdq;
+	double tmp = 0;
+	int index = 0;
+	for(int i=0;i<maxsize;i++){
+		index = maxindex[i];
+
+
+		tmpdq = new deque<double>();
+		if(i == 0)
+		{
+			for(int j=0;j<=index;j++)
+			{
+				tmpdq->push_back(maxbuffer[j]);
+			}
+		}else{
+			tmp = buffer[index-1];
+			tmpdq->push_back(tmp);
+			for(int j=maxindex[i-1]+1;j<=index;j++)
+			{
+				tmpdq->push_back(maxbuffer[j]);
+			}
+		}
+		buffer[index] = GetMax(tmpdq);
+		delete tmpdq;
+	}
+
+	for(int i=0;i<minsize;i++){
+		index = minindex[i];
+		tmpdq = new deque<double>();
+		if(i == 0)
+		{
+			for(int j=0;j<=index;j++)
+			{
+				tmpdq->push_back(minbuffer[j]);
+			}
+		}else{
+			tmp = buffer[index-1];
+			tmpdq->push_back(tmp);
+			for(int j=minindex[i-1]+1;j<=index;j++)
+			{
+				tmpdq->push_back(minbuffer[j]);
+			}
+		}
+		buffer[index] = GetMin(tmpdq);
+		delete tmpdq;
+	}
+}
+
+void makebuffer1(double buffer[], double minindex[], double minbuffer[], size_t minsize)
+{
+	deque<double>* tmpdq;
+	double tmp = 0;
+	int index = 0;
+
+	for(int i=0;i<minsize;i++){
+		index = minindex[i];
+		tmpdq = new deque<double>();
+		if(i == 0)
+		{
+			for(int j=0;j<=index;j++)
+			{
+				tmpdq->push_back(minbuffer[j]);
+			}
+		}else{
+			tmp = buffer[index-1];
+			tmpdq->push_back(tmp);
+			for(int j=minindex[i-1]+1;j<=index;j++)
+			{
+				tmpdq->push_back(minbuffer[j]);
+			}
+		}
+		buffer[index] = GetMin(tmpdq);
+		delete tmpdq;
+	}
+}
+
+void makebuffer3(double buffer[], double maxindex[], double maxbuffer[], double minindex[], double minbuffer[], double meanindex[], double meanbuffer[], size_t maxsize, size_t minsize, size_t meansize)
+{
+	deque<double>* tmpdq;
+	double tmp = 0;
+	int index = 0;
+	for(int i=0;i<maxsize;i++){
+		index = maxindex[i];
+
+
+		tmpdq = new deque<double>();
+		if(i == 0)
+		{
+			for(int j=0;j<=index;j++)
+			{
+				tmpdq->push_back(maxbuffer[j]);
+			}
+		}else{
+			tmp = buffer[index-1];
+			tmpdq->push_back(tmp);
+			for(int j=maxindex[i-1]+1;j<=index;j++)
+			{
+				tmpdq->push_back(maxbuffer[j]);
+			}
+		}
+		buffer[index] = GetMax(tmpdq);
+		delete tmpdq;
+	}
+
+	for(int i=0;i<minsize;i++){
+		index = minindex[i];
+		tmpdq = new deque<double>();
+		if(i == 0)
+		{
+			for(int j=0;j<=index;j++)
+			{
+				tmpdq->push_back(minbuffer[j]);
+			}
+		}else{
+			tmp = buffer[index-1];
+			tmpdq->push_back(tmp);
+			for(int j=minindex[i-1]+1;j<=index;j++)
+			{
+				tmpdq->push_back(minbuffer[j]);
+			}
+		}
+		buffer[index] = GetMin(tmpdq);
+		delete tmpdq;
+	}
+
+	for(int i=0;i<meansize;i++){
+		index = meanindex[i];
+
+
+		tmpdq = new deque<double>();
+		if(i == 0)
+		{
+			for(int j=0;j<=index;j++)
+			{
+				tmpdq->push_back(meanbuffer[j]);
+			}
+		}else{
+			tmp = buffer[index-1];
+			tmpdq->push_back(tmp);
+			for(int j=meanindex[i-1]+1;j<=index;j++)
+			{
+				tmpdq->push_back(meanbuffer[j]);
+			}
+		}
+		buffer[index] = GetMean(tmpdq);
+		delete tmpdq;
+	}
+}
+
+void makebuffer4(double buffer[], double maxindex[], double maxbuffer[], double minindex[], double minbuffer[], double meanindex[], double meanbuffer[], double varindex[], double varbuffer[], size_t maxsize, size_t minsize, size_t meansize, size_t varsize)
+{
+	deque<double>* tmpdq;
+	double tmp = 0;
+	int index = 0;
+	for(int i=0;i<maxsize;i++){
+		index = maxindex[i];
+
+
+		tmpdq = new deque<double>();
+		if(i == 0)
+		{
+			for(int j=0;j<=index;j++)
+			{
+				tmpdq->push_back(maxbuffer[j]);
+			}
+		}else{
+			tmp = buffer[index-1];
+			tmpdq->push_back(tmp);
+			for(int j=maxindex[i-1]+1;j<=index;j++)
+			{
+				tmpdq->push_back(maxbuffer[j]);
+			}
+		}
+		buffer[index] = GetMax(tmpdq);
+		delete tmpdq;
+	}
+
+	for(int i=0;i<minsize;i++){
+		index = minindex[i];
+		tmpdq = new deque<double>();
+		if(i == 0)
+		{
+			for(int j=0;j<=index;j++)
+			{
+				tmpdq->push_back(minbuffer[j]);
+			}
+		}else{
+			tmp = buffer[index-1];
+			tmpdq->push_back(tmp);
+			for(int j=minindex[i-1]+1;j<=index;j++)
+			{
+				tmpdq->push_back(minbuffer[j]);
+			}
+		}
+		buffer[index] = GetMin(tmpdq);
+		delete tmpdq;
+	}
+
+	for(int i=0;i<meansize;i++){
+		index = meanindex[i];
+
+
+		tmpdq = new deque<double>();
+		if(i == 0)
+		{
+			for(int j=0;j<=index;j++)
+			{
+				tmpdq->push_back(meanbuffer[j]);
+			}
+		}else{
+			tmp = buffer[index-1];
+			tmpdq->push_back(tmp);
+			for(int j=meanindex[i-1]+1;j<=index;j++)
+			{
+				tmpdq->push_back(meanbuffer[j]);
+			}
+		}
+		buffer[index] = GetMean(tmpdq);
+		delete tmpdq;
+	}
+
+	for(int i=0;i<varsize;i++){
+		index = varindex[i];
+
+
+		tmpdq = new deque<double>();
+		if(i == 0)
+		{
+			for(int j=0;j<=index;j++)
+			{
+				tmpdq->push_back(varbuffer[j]);
+			}
+		}else{
+			tmp = buffer[index-1];
+			tmpdq->push_back(tmp);
+			for(int j=varindex[i-1]+1;j<=index;j++)
+			{
+				tmpdq->push_back(varbuffer[j]);
+			}
+		}
+		buffer[index] = GetVar(tmpdq);
+		delete tmpdq;
+	}
+}
 string ConvertToString(double value)
 {
 	stringstream ss;
@@ -255,26 +531,26 @@ void updatePara1(PARALIST *pl, double dvalue)
 	}
 }
 
-void updateParas1(PARALIST* pl, deque<double>** data){
+void updateParas1(PARALIST* pl, deque<double>* data[]){
 	string pstring;
 	string value;
-	LISTDOUBLE* lv
+	LISTDOUBLE* lv;
 	PARALIST::iterator pit;
 
 	int i = 0;
 	for (pit = pl->begin(); pit != pl->end(); pit++){
-		lv = data->at(i);
+		lv = data[i];
 		(*pit)->SetListValue(lv);
 		value = ConvertListToString(lv);
 		pstring = (*pit)->GetName() + "=" + value+"\n";
 		scan_string(pstring.c_str());
-		cout<<"The info of para is : "<< pstring<<endl;
+//		cout<<"The info of para is : "<< pstring<<endl;
 		yyparse();
 		i++;
 	}
 }
 
-void updateParas2(PARALIST* pl, double[] buffer){
+void updateParas2(PARALIST* pl, double buffer[]){
 	string pstring;
 	string value;
 	double dvalue = 0;
@@ -294,7 +570,7 @@ void updateParas2(PARALIST* pl, double[] buffer){
 	}
 }
 
-void initReasonwork(reason *re, calc::calc_parser *parser)
+void initReasonwork1(reason *re, calc::calc_parser *parser)
 {
 	PARALIST *pl = re->GetParaList();
 	TOKENLIST *tl = re->GetTokenList();
@@ -305,7 +581,6 @@ void initReasonwork(reason *re, calc::calc_parser *parser)
 
 	string tstring;
 	double dvalue = 0;
-	LISTDOUBLE *lvalue = new deque<double>();
 	/*
 	for(pit = pl->begin();pit!=pl->end();pit++)
 	{
@@ -316,6 +591,7 @@ void initReasonwork(reason *re, calc::calc_parser *parser)
 		yyparse();
 	}
 	*/
+	LISTDOUBLE *lvalue = new deque<double>();
 	lvalue->push_back(1);
 	for (pit = pl->begin(); pit != pl->end(); pit++)
 	{
@@ -324,6 +600,7 @@ void initReasonwork(reason *re, calc::calc_parser *parser)
 		scan_string(pstring.c_str());
 		yyparse();
 	}
+	delete lvalue;
 	/*
 	for(tit = tl->begin();tit!=tl->end();tit++)
 	{
@@ -332,7 +609,51 @@ void initReasonwork(reason *re, calc::calc_parser *parser)
 		yyparse();
 	}
 	*/
+}
+
+void initReasonwork2(reason *re, calc::calc_parser *parser)
+{
+	PARALIST *pl = re->GetParaList();
+	TOKENLIST *tl = re->GetTokenList();
+	PARALIST::iterator pit;
+	TOKENLIST::iterator tit;
+	string value;
+	string pstring;
+
+	string tstring;
+	double dvalue = 0;
+	
+	for(pit = pl->begin();pit!=pl->end();pit++)
+	{
+		dvalue = 0.0;
+		value = ConvertToString(dvalue);
+		pstring = (*pit)->GetName() + "=" + value+"\n";
+		scan_string(pstring.c_str());
+		yyparse();
+	}
+	
+
+	/*
+	LISTDOUBLE *lvalue = new deque<double>();
+	lvalue->push_back(1);
+	for (pit = pl->begin(); pit != pl->end(); pit++)
+	{
+		value = ConvertListToString(lvalue);
+		pstring = (*pit)->GetName() + "=" + value + "\n";
+		scan_string(pstring.c_str());
+		yyparse();
+	}
 	delete lvalue;
+	*/
+
+	/*
+	for(tit = tl->begin();tit!=tl->end();tit++)
+	{
+		tstring = (*tit)->GetTokenName() + "=" + (*tit)->GetTokenContent()+"\n";
+		scan_string(tstring.c_str());
+		yyparse();
+	}
+	*/
 }
 
 void reshapeRulePara(reason *re, calc::calc_parser *parser, optimize* opt)
@@ -474,17 +795,13 @@ void reasonRules(reason *re, calc::calc_parser *parser)
 	for (rit = rlist->begin(); rit != rlist->end(); rit++)
 	{
 		rstring = (*rit)->GetAntecedent() + "\n";
-		cout << "rstring: " << rstring << endl;
 		scan_string(rstring.c_str());
-		cout << "scan success" << endl;
 		yyparse();
-		cout << "parser success" << endl;
 		if (parser->GetResult() == 1)
 		{
 			cout << "Trigger rule: " << (*rit)->GetRuleName() << "---" << (*rit)->GetAntecedent() << " THEN " << (*rit)->GetConsequent() << endl;
 		}
 	}
-	cout << "reasonRule complete." << endl;
 }
 
 void reasonRulesList(optimize* opt, reason *re, calc::calc_parser *parser, oriAllocator *oa, PARALIST *pl)

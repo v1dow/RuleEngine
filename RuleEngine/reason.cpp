@@ -43,9 +43,8 @@ int reason::InitReasonNetwork()
 
 	maptListToMap();
 	mappListToMap();
-	cout<<"------------before reshape------------"<<endl;
-	testPara();
-	testRule();
+	//testPara();
+	//testRule();
 	//testIndeRList();
 	//testNestedRuleList();
 	//testToken();
@@ -161,7 +160,7 @@ int reason::LoadParaFromFile()
 {
 	FILE *fp;
 	char buff[4096]={'\0'};
-	const string pFilePath = "parax.txt";
+	const string pFilePath = "para2.txt";
 	fp = fopen(pFilePath.c_str(),"r+");
    	if(!fp)
    	{
@@ -191,7 +190,7 @@ int reason::LoadRuleFromFile()
 {
 	FILE *fp;
 	char buff[4096]={'\0'};
-	const string rFilePath = "rulex.txt";
+	const string rFilePath = "rule22.txt";
 	fp = fopen(rFilePath.c_str(),"r+");
    	if(!fp)
    	{

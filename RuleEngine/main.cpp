@@ -1,5 +1,6 @@
 #include "func.h"
 #include <chrono>
+#include <fstream>
 
 extern reason* re;
 
@@ -30,7 +31,7 @@ int main(int argc, char *argv[])
 		re->InitReasonNetwork();
 
 		srand((unsigned)time(NULL));
-		initReasonwork(re, parser);
+		initReasonwork2(re, parser);
 
 		while (1)
 		{
@@ -83,17 +84,18 @@ int main(int argc, char *argv[])
 		// else
 		// 	printf("open database successfully.\n");
 
-		int timeseries[] = {10,15,20,25,30,35};
+		int timeseries[] = {5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100,105,110,115,120,125,130};
 		auto timesize = sizeof(timeseries)/sizeof(int);
 		double timescale = 0;
-		double tmpscale = 0;
 		double samplingFreq = 0.01;
 		bool flag = false;
+		double value = 0;
 
 		reason *re = new reason();
 		re->InitReasonNetwork();
-		initReasonwork(re, parser);
+		initReasonwork2(re, parser);
 		srand((unsigned)time(NULL));
+
 
 		/* ************************
 		* Scheme without optimize *
@@ -102,36 +104,47 @@ int main(int argc, char *argv[])
 		auto start = chrono::high_resolution_clock::now();
 
 		window* windows[timesize];
-		deque<double>* bigwindow[timesize];
+		double tmpscale = 0;
 		for(int i = 0;i < timesize;i++){
 			timescale = timeseries[i] - tmpscale;
-			tmpscale = timescale;
-			windows->at(i) = new window(samplingFreq,timescale);
+			tmpscale = timeseries[i];
+			windows[i] = new window(samplingFreq,timescale);
 		}
 
-		for(int k=0;k<100;k++)
+		for(int k=0;k<1;k++)
 		{
-			for(int i=0;i<timeseries[timesize-1]/samplingFreq;i++)
+			deque<double>* bigwindow[timesize];
+			int index = 0;
+			while(1)
 			{
+				if(index == timesize)
+				{
+					break;
+				}
 				value = genRandData(0.7,1.5);
-				for(int j = 0;j < timesize;j++){
-					if(!flag){
-						windows->at(j)->fillWindow(value);
-					}else{
-						bigwindow->at(j) = combineWindows(windows,j);
-						flag = false;
-					}
+				if(!flag){
+					flag = windows[index]->fillWindow(value);
+				}else{
+					bigwindow[index] = combineWindows(windows,index);
+					flag = false;
+					index++;
 				}
 			}
 
 			PARALIST *pl = re->GetParaList();
 
 			updateParas1(pl,bigwindow);
-
+			for(int y=0;y<timesize;y++)
+			{
+				delete bigwindow[y];
+			}
 			reasonRules(re,parser);
 		}
 
-		delete[] windows;
+		for(int i=0;i<timesize;i++){
+			delete windows[i];
+		}
+
 
 		auto finish = chrono::high_resolution_clock::now();
 		chrono::duration<double> elapsed = finish - start;
@@ -141,70 +154,85 @@ int main(int argc, char *argv[])
 		/* *********************
 		* Scheme with optimize *
 		********************* */
-/*
+
 		auto start = chrono::high_resolution_clock::now();
 
 		window* windowslice;
-		deque<double> tmpdq;
+		deque<double>* tmpdq;
 
-		double buffer[6] = {0,0,0,0,0,0};
-		double maxbuffer[6] = {0,0,0,0,0,0};
-		double minbuffer[6] = {0,0,0,0,0,0};
+		double buffer[26] = {0};
+		size_t buffersize = sizeof(buffer)/sizeof(double);
+		double maxbuffer[26] = {0};
+		double minbuffer[26] = {0};
+		//double meanbuffer[26] = {0};
+		//double varbuffer[26] = {0};
+		double maxindex[13] = {0,2,4,6,8,10,12,14,16,18,20,22,24};
+		double minindex[13] = {1,3,5,7,9,11,13,15,17,19,21,23,25};
+		//double meanindex[8] = {2,5,8,11,14,17,20,23};
+		//double varindex[10] = {3,7,11,15,19,23,27,31,35,39};
 
-	 	for(int k=0;k<100;k++)
+	 	for(int k=0;k<1;k++)
 		{   
-			for(int i=0;i<timeseries[timesize-1]/samplingFreq;i++)
+			int index = 0;
+			double tmpscale = 0;
+			timescale = timeseries[0] - tmpscale;
+			tmpscale = timeseries[0];
+			windowslice = new window(samplingFreq,timescale);
+			while(1)
 			{
 				value = genRandData(0.7,1.5);
-				for(int j = 0;j < timesize;j++){
-					timescale = timeseries[j] - tmpscale;
-					tmpscale = timescale;
-					windowslice = new window(samplingFreq,timescale);
-					if(!flag){
-						windowslice->fillWindow(value);
-					}else{
-						maxbuffer[j] = GetMax(windowslice->getData());
-						minbuffer[j] = GetMin(windowslice->getData());
-						flag = false;
-						delete windowslice;
+				if(!flag){
+					flag = windowslice->fillWindow(value);
+				}else{
+					maxbuffer[index] = GetMax(windowslice->getData());
+					minbuffer[index] = GetMin(windowslice->getData());
+					//meanbuffer[index] = GetMean(windowslice->getData());
+					//varbuffer[index] = GetVar(windowslice->getData());
+					flag = false;
+					index++;
+					delete windowslice;
+					if(index == timesize)
+					{
+						break;
 					}
+					timescale = timeseries[index]-tmpscale;
+					tmpscale = timeseries[index];
+					windowslice = new window(samplingFreq,timescale);
 				}
 			}
-			tmpdq.push_back(maxbuffer[0]);
-			buffer[0] =  GetMax(tmpdq);
-			tmpdq.clear();
-			tmpdq.push_back(minbuffer[0]);
-			tmpdq.push_back(minbuffer[1]);
-			buffer[1] =  GetMin(tmpdq);
-			tmpdq.clear();
-			tmpdq.push_back(buffer[1]);
-			tmpdq.push_back(minbuffer[2]);
-			buffer[2] =  GetMin(tmpdq);
-			tmpdq.clear();
-			tmpdq.push_back(buffer[0]);
-			tmpdq.push_back(maxbuffer[1]);
-			tmpdq.push_back(maxbuffer[2]);
-			tmpdq.push_back(maxbuffer[3]);
-			buffer[3] =  GetMax(tmpdq);
-			tmpdq.clear();
-			tmpdq.push_back(maxbuffer[4]);
-			buffer[4] =  GetMax(tmpdq);
-			tmpdq.clear();
-			tmpdq.push_back(minbuffer[3]);
-			tmpdq.push_back(minbuffer[4]);
-			tmpdq.push_back(minbuffer[5]);
-			buffer[5] =  GetMin(tmpdq);
+			
+			//makebuffer4(buffer,maxindex,maxbuffer,minindex,minbuffer,meanindex,meanbuffer,varindex,varbuffer,11,11,10,10);
+			//makebuffer3(buffer,maxindex,maxbuffer,minindex,minbuffer,meanindex,meanbuffer,9,9,8);
+			makebuffer(buffer,maxindex,maxbuffer,minindex,minbuffer,13,13);
+			//makebuffer1(buffer,minindex,minbuffer,10);
 
 			PARALIST *pl = re->GetParaList();
 
 			updateParas2(pl,buffer);
 
 			reasonRules(re,parser);
+
 		}
 		auto finish = chrono::high_resolution_clock::now();
 		chrono::duration<double> elapsed = finish - start;
 		cout<<"elapsed time: "<<elapsed.count()<<" s"<<endl;
-*/
+
+
+        /* track memory usage. */
+		int tSize = 0, resident = 0, share = 0;
+    	ifstream fbuffer("/proc/self/statm");
+    	fbuffer >> tSize >> resident >> share;
+    	fbuffer.close();
+
+    	long page_size_kb = sysconf(_SC_PAGE_SIZE) / 1024; // in case x86-64 is configured to use 2MB pages
+    	double rss = resident * page_size_kb;
+    	cout << "RSS - " << rss << " kB\n";
+
+    	double shared_mem = share * page_size_kb;
+    	cout << "Shared Memory - " << shared_mem << " kB\n";
+
+    	cout << "Private Memory - " << rss - shared_mem << "kB\n";
+
 
 		// oriAllocator *oa = new oriAllocator(0.01,1);
 		// optimize *opt = new optimize();
@@ -293,7 +321,7 @@ int main(int argc, char *argv[])
 		// 		break;
 		// }
 		// //reasonOnce(re,parser,oa,pl);
-		auto start1 = chrono::high_resolution_clock::now();
+//		auto start1 = chrono::high_resolution_clock::now();
 		// for(int i=0;i<oa->GetRoundLength()*oa->GetInferRound()*100;i++){
 		// 	//thread treason(reasonOnce,opt,re,parser,oa,pl);
 		// 	//updateData(oa);
@@ -320,22 +348,22 @@ int main(int argc, char *argv[])
 		// 		tupdateData.join();				
 		// 	}
 		// }
-		oriAllocator *oa1 = new oriAllocator(100,1);
-		for(int i=0;i<oa1->GetRoundLength()*1000;i++)
-		{
-			value = genRandData(0.7,1.5);
-			mflag = oa1->genMemData(value);
-			//cout<<"value: "<<value<<endl;
-			//cout<<"test1, count i: "<<i<<endl;
-			if(mflag)
-			{
-				//oa1->testMemData();
-				reasonRulesList(opt,re,parser,oa1,pl);
-				mflag = false;
-			}
-		}
-		auto finish1 = chrono::high_resolution_clock::now();
-		chrono::duration<double> elapsed1 = finish1 - start1;
+//		oriAllocator *oa1 = new oriAllocator(100,1);
+//		for(int i=0;i<oa1->GetRoundLength()*1000;i++)
+//		{
+//			value = genRandData(0.7,1.5);
+//			mflag = oa1->genMemData(value);
+//			//cout<<"value: "<<value<<endl;
+//			//cout<<"test1, count i: "<<i<<endl;
+//			if(mflag)
+//			{
+//				//oa1->testMemData();
+//				reasonRulesList(opt,re,parser,oa1,pl);
+//				mflag = false;
+//			}
+//		}
+//		auto finish1 = chrono::high_resolution_clock::now();
+//		chrono::duration<double> elapsed1 = finish1 - start1;
 
 		// auto start2 = chrono::high_resolution_clock::now();
 		// oriAllocator *oa2 = new oriAllocator(1000,10);

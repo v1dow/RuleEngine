@@ -219,7 +219,7 @@ expr
 	| POW '(' expr ',' expr ')'		{ $$ = parser->exponent2($3,$5); }
 	| EXP '(' expr ')'			{ $$ = exp($3); }
 	| LOG '(' expr ')'			{ $$ = log($3); }
-	| MAX '(' listexpr ')'		{ $$ = parser->GetMax($3); printf("max value: %f",parser->GetMax($3)); }
+	| MAX '(' listexpr ')'		{ $$ = parser->GetMax($3); }
 	| MAXS '(' ADDRESS ',' expr ')'		{ $$ = parser->GetMaxs($3,$5); }
 	| MIN '(' listexpr ')'		{ $$ = parser->GetMin($3); }
 	| MEAN '(' listexpr ')'		{ $$ = parser->GetMean($3); }
