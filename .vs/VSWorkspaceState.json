@@ -1,8 +1,10 @@
 {
   "ExpandedNodes": [
     "",
+    "\\examples",
+    "\\examples\\singleDataExample",
     "\\experiment"
   ],
-  "SelectedNode": "\\experiment\\para2.txt",
+  "SelectedNode": "\\experiment\\Makefile",
   "PreviewInSolutionExplorer": false
 }
