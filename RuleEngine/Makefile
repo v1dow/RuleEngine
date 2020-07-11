@@ -2,8 +2,32 @@ LEX=flex
 YACC=bison
 CC=g++
 all:libRuleEngine.so
-libRuleEngine.so: window.o sqliteFunc.o func.o oriAllocator.o intermediate.o statOp.o optimize.o calc.o calc_parser.o lex.yy.o parser.tab.o reason.o rule.o para.o token.o tinystr.o tinyxmlparser.o tinyxml.o tinyxmlerror.o
-	g++ -fPIC -shared -o libRuleEngine.so window.o sqliteFunc.o func.o oriAllocator.o intermediate.o statOp.o optimize.o calc.o calc_parser.o lex.yy.o parser.tab.o symbol.o reason.o rule.o para.o token.o tinystr.o tinyxmlparser.o tinyxml.o tinyxmlerror.o -lpthread -lsqlite3
+libRuleEngine.so: basicWindow.o slidingWindow.o statistical.o statisticalUnion.o preprocessing.o ruleTree.o ruleNetwork.o lct.o window.o sqliteFunc.o func.o oriAllocator.o intermediate.o statOp.o optimize.o calc.o calc_parser.o lex.yy.o parser.tab.o reason.o rule.o para.o token.o tinystr.o tinyxmlparser.o tinyxml.o tinyxmlerror.o
+	g++ -fPIC -shared -o libRuleEngine.so basicWindow.o slidingWindow.o statistical.o statisticalUnion.o preprocessing.o ruleTree.o ruleNetwork.o lct.o window.o sqliteFunc.o func.o oriAllocator.o intermediate.o statOp.o optimize.o calc.o calc_parser.o lex.yy.o parser.tab.o symbol.o reason.o rule.o para.o token.o tinystr.o tinyxmlparser.o tinyxml.o tinyxmlerror.o -lpthread -lsqlite3
+
+basicWindow.o basicWindow.cpp
+	g++ -fPIC -c basicWindow.cpp
+
+slidingWindow.o slidingWindow.cpp
+	g++ -fPIC -c slidingWindow.cpp
+
+statistical.o statistical.cpp
+	g++ -fPIC -c statistical.cpp
+
+statisticalUnion.o statisticalUnion.cpp
+	g++ -fPIC -c statisticalUnion.cpp
+
+preprocessing.o preprocessing.cpp
+	g++ -fPIC -c preprocessing.cpp
+
+ruleTree.o ruleTree.cpp
+	g++ -fPIC -c ruleTree.cpp
+
+ruleNetwork.o ruleNetwork.cpp
+	g++ -fPIC -c ruleNetwork.cpp
+
+lct.o lct.cpp
+	g++ -fPIC -c lct.cpp
 
 sqliteFunc.o: sqliteFunc.cpp
 	g++ -fPIC -c sqliteFunc.cpp

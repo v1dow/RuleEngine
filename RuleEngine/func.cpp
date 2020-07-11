@@ -80,6 +80,11 @@ double GetVar(deque<double>* d)
 	return result/(d->size() - 1);
 }
 
+double GetStd(deque<double>* d)
+{
+	return sqrt(GetVar(d));
+}
+
 void makebuffer(double buffer[], double maxindex[], double maxbuffer[], double minindex[], double minbuffer[], size_t maxsize, size_t minsize)
 {
 	deque<double>* tmpdq;
@@ -1069,4 +1074,50 @@ void reasonNestedRules(reason *re, calc::calc_parser *parser)
 			}
 		}
 	}
+}
+
+double digestGenerator(string op, deque<double>* d)
+{
+	double result = 0.0;
+
+	if (op == "MAX")
+		result = GetMax(d);
+	if (op == "MIN")
+		result = GetMin(d);
+	if (op == "AVG")
+		result = GetMean(d);
+	if (op == "VAR")
+		result = GetVar(d);
+	if (op == "STD")
+		result = GetStd(d);
+
+	return result;
+}
+
+int gcd(int a, int b)
+{
+	int tmp;
+	if (a < b)
+	{
+		tmp = a;
+		a = b;
+		b = tmp;
+	}
+	while (b != 0)
+	{
+		tmp = a % b;
+		a = b;
+		b = tmp;
+	}
+	return a;
+}
+
+int multiGcd(set<int>* s)
+{
+	if (s->size() == 1)
+		return (*(s->begin()));
+	int size = s->size();
+	int tmp = *(s->end());
+	s->erase(size - 1);
+	return gcd(tmp, multiGcd(s));
 }

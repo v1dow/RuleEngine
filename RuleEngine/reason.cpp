@@ -190,7 +190,7 @@ int reason::LoadRuleFromFile()
 {
 	FILE *fp;
 	char buff[4096]={'\0'};
-	const string rFilePath = "rule22.txt";
+	const string rFilePath = "rule2x.txt";
 	fp = fopen(rFilePath.c_str(),"r+");
    	if(!fp)
    	{

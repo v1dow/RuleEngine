@@ -50,6 +50,8 @@ double GetMean(deque<double>* d);
 
 double GetVar(deque<double>* d);
 
+double GetStd(deque<double>* d);
+
 void makebuffer(double buffer[], double maxindex[], double maxbuffer[], double minindex[], double minbuffer[], size_t maxsize, size_t minsize);
 
 void makebuffer1(double buffer[], double minindex[], double minbuffer[], size_t minsize);
@@ -109,6 +111,8 @@ void reasonIndeRules(reason *re, calc::calc_parser *parser);
 
 void reasonNestedRules(reason *re, calc::calc_parser *parser);
 
-
+double digestGenerator(string op, deque<double>* d);
+int gcd(int a, int b);
+int multiGcd(set<int>* s);
 
 #endif
