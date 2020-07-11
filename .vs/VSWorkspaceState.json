@@ -2,9 +2,8 @@
   "ExpandedNodes": [
     "",
     "\\examples",
-    "\\examples\\singleDataExample",
-    "\\experiment"
+    "\\RuleEngine"
   ],
-  "SelectedNode": "\\experiment\\Makefile",
+  "SelectedNode": "\\RuleEngine\\reason.h",
   "PreviewInSolutionExplorer": false
 }
